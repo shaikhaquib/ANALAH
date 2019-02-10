@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ANALAH</string>
+    <string name="username">User Name</string>
+    <string name="password">Password</string>
+    <string name="device_admin_label">ANALAH ADMIN</string>
+    <string name="device_description">ANALAH required DEVICE ADMIN permission to Record calls.</string>
+</resources>
