@@ -14,7 +14,7 @@
         android:layout_marginBottom="34dp"
         android:id="@+id/loginAsGuest"
         android:gravity="center_vertical|center"
-        android:text="Powered by ANALAH CRM \n \u00A9 2018-19"
+        android:text="Powered by sCytech  CRM \n \u00A9 2018-19"
         android:textStyle="italic|normal" />
 
 
@@ -109,17 +109,32 @@
                     />
             </android.support.v7.widget.CardView>
 
-            <EditText
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
+                android:layout_gravity="center_vertical"
                 android:layout_height="match_parent"
-                android:hint="@string/password"
-                android:id="@+id/password"
-                android:layout_weight="8"
-                android:background="#00000000"
-                android:maxLines="1"
-                android:inputType="textPassword"
-                android:singleLine="true"
-                android:paddingLeft="8dp"/>
+                android:gravity="center_vertical"
+                app:hintEnabled="false"
+                app:hintAnimationEnabled="false"
+                app:passwordToggleEnabled="true"
+                android:paddingLeft="8dp"
+                app:passwordToggleDrawable="@drawable/showpass"
+                android:layout_weight="8">
+
+                <EditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center"
+                    android:background="#00000000"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
 
 
         </LinearLayout>
@@ -138,6 +153,7 @@
                 android:layout_weight="1"
                 android:textStyle="italic|normal"
                 android:textColor="#9e9e9e"
+                android:visibility="gone"
                 android:gravity="end|center_vertical"
                 android:text="Change/Forgot password ?"/>
 

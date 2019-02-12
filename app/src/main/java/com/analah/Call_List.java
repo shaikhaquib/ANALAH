@@ -22,6 +22,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -61,7 +64,7 @@ public class Call_List extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calllist);
-        setTitle("CALL LIST");
+        setTitle("Lead List");
         session = new SessionManager(getApplicationContext());
         db = new SQLiteHandler(this);
         progressDialog = new ProgressDialog(this);
@@ -97,6 +100,7 @@ public class Call_List extends AppCompatActivity {
                 holder.Call.setTag(i);
 
                 holder.name.setText(model.Name);
+                holder.campName.setText(model.Name);
                 holder.desc.setText(model.Phone_no);
 
                 holder.Call.setOnClickListener(new View.OnClickListener() {
@@ -155,12 +159,13 @@ public class Call_List extends AppCompatActivity {
 
             class Holder extends RecyclerView.ViewHolder {
                 CardView Call;
-                TextView name ,desc;
+                TextView name ,desc,campName;
                 public Holder(@NonNull View itemView) {
                     super(itemView);
                     Call=itemView.findViewById(R.id.call);
                     name=itemView.findViewById(R.id.name);
                     desc=itemView.findViewById(R.id.desc);
+                    campName=itemView.findViewById(R.id.campName);
                 }
             }
 
@@ -276,5 +281,26 @@ public class Call_List extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId())
+        {
+            case R.id.logout:
+                session.setLogin(false);
+                db.deleteUsers();
+                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                finish();
+                break;
+
+        }
+        return true;
+    }
 
 }
