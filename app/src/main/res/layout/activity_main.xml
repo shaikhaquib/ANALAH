@@ -14,7 +14,7 @@
         android:layout_marginBottom="34dp"
         android:id="@+id/loginAsGuest"
         android:gravity="center_vertical|center"
-        android:text="Powered by sCytech  CRM \n \u00A9 2018-19"
+        android:text="Powered by sCytech \n \u00A9 2018-19"
         android:textStyle="italic|normal" />
 
 
