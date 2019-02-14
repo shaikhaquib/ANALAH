@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardElevation="4dp"
+    android:orientation="vertical"
+    android:layout_marginRight="16dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginTop="16dp"
+    app:cardCornerRadius="6dp"
+    tools:context=".Form_Detail">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/colorPrimary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:cardCornerRadius="8dp">
+
+            <TextView
+                android:id="@+id/campName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="CAMPAIGN NAME SAMPLE"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+
+        </android.support.v7.widget.CardView>
+
+
+        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="8dp"
+            android:stretchColumns="2">
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:text="Name :"
+                    android:paddingTop="8dp"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/cmpname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="8dp"
+                    android:background="#e8e8e8"
+                    android:textSize="16sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:text="Title :"
+                    android:paddingTop="8dp"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/cmptitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:background="#e8e8e8"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="8dp"
+                    android:textSize="16sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:paddingTop="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:text="Department :"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/cmpdept"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:background="#e8e8e8"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="8dp"
+                    android:textSize="16sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:paddingTop="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:text="Account Name :"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/cmpacctname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:background="#e8e8e8"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="8dp"
+                    android:textSize="16sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="8dp"
+                android:layout_gravity="top"
+                android:gravity="top|center">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:layout_gravity="top"
+                    android:paddingTop="8dp"
+                    android:text="Primory Address : "
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/cmpadd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:background="#e8e8e8"
+                    android:lines="3"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="8dp"
+                    android:textSize="16sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:text="Email Address :"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/cmpemail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:background="#e8e8e8"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="8dp"
+                    android:textSize="16sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:paddingTop="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:text="Mobile No :"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/cmpMobile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:background="#e8e8e8"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="8dp"
+                    android:textSize="16sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:paddingTop="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:text="Upload Call Record : "
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:background="#e8e8e8"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="8dp"
+                    android:textSize="16sp" />
+            </TableRow>
+
+
+        </TableLayout>
+
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/colorPrimary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:cardCornerRadius="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="CALL RESULT"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+
+        </android.support.v7.widget.CardView>
+
+        <com.analah.RadioButtonWithTableLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+
+                <RadioButton
+                    android:id="@+id/rbLead"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:buttonTint="@color/colorPrimary"
+                    android:drawablePadding="@dimen/margin_16"
+                    android:paddingLeft="20dp"
+                    android:text=" Lead" />
+
+                <RadioButton
+                    android:id="@+id/rbCallback"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:buttonTint="@color/colorPrimary"
+                    android:paddingLeft="20dp"
+                    android:text=" Call Back" />
+
+            </TableRow>
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <RadioButton
+                    android:id="@+id/rbNotIntrest"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:buttonTint="@color/colorPrimary"
+                    android:paddingLeft="20dp"
+                    android:text=" Not Interested" />
+
+                <RadioButton
+                    android:id="@+id/rbNotQualifed"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:buttonTint="@color/colorPrimary"
+                    android:drawablePadding="@dimen/margin_16"
+                    android:paddingLeft="20dp"
+                    android:text=" Not Qualified" />
+            </TableRow>
+
+        </com.analah.RadioButtonWithTableLayout>
+
+        <LinearLayout
+            android:id="@+id/leadViw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="@color/colorPrimary"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Lead Source"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+
+            </android.support.v7.widget.CardView>
+
+
+            <EditText
+                android:id="@+id/cmpLeadsource"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:background="#e8e8e8"
+                android:lines="2"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/CallBack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="@color/colorPrimary"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Lead Source"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+
+            </android.support.v7.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal|center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal|center_vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_date_range_black_24dp" />
+
+                    <EditText
+                        android:id="@+id/cmpDate"
+                        android:layout_width="130dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2"
+                        android:layout_marginLeft="4dp"
+                        android:background="#e8e8e8"
+                        android:paddingTop="8dp"
+                        android:gravity="center"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal|center_vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_time_black_24dp" />
+
+                    <EditText
+                        android:id="@+id/cmpTime"
+                        android:layout_width="130dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2"
+                        android:layout_marginLeft="4dp"
+                        android:background="#e8e8e8"
+                        android:paddingTop="8dp"
+                        android:gravity="center"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="@color/colorPrimary"
+                app:cardCornerRadius="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Description"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+
+
+            </android.support.v7.widget.CardView>
+
+        <EditText
+            android:id="@+id/cmpDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_column="2"
+            android:layout_marginBottom="@dimen/margin_16"
+            android:background="@drawable/border"
+            android:gravity="top"
+            android:hint="Write Note Here.."
+            android:lines="3"
+            android:padding="@dimen/margin_16"
+            android:textSize="16sp" />
+
+
+
+
+        <Button
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="142dp"
+            android:id="@+id/login"
+            android:background="@color/colorPrimary"
+            android:text="Login"
+            android:layout_margin="@dimen/margin_16"
+            android:layout_gravity="center"
+            android:textColor="@color/white" />
+
+
+    </LinearLayout>
+    </ScrollView>
+</LinearLayout>

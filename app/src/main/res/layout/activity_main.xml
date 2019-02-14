@@ -13,9 +13,10 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="34dp"
         android:id="@+id/loginAsGuest"
+        android:fontFamily="@font/acme_regular"
         android:gravity="center_vertical|center"
-        android:text="Powered by sCytech \n \u00A9 2018-19"
-        android:textStyle="italic|normal" />
+        android:text="Powered by sCytech \n \u00A9 ANALAH | 2018-19"
+        android:textStyle="normal" />
 
 
 

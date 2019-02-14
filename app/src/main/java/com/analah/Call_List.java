@@ -98,10 +98,18 @@ public class Call_List extends AppCompatActivity {
 
                 final Calling_model model = models.get(i);
                 holder.Call.setTag(i);
+                holder.Dtails.setTag(i);
 
                 holder.name.setText(model.Name);
                 holder.campName.setText(model.Name);
                 holder.desc.setText(model.Phone_no);
+
+                holder.Dtails.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(getApplicationContext(),Form_Detail.class).putExtra("id",model.id));
+                    }
+                });
 
                 holder.Call.setOnClickListener(new View.OnClickListener() {
                     @SuppressLint("MissingPermission")
@@ -158,11 +166,12 @@ public class Call_List extends AppCompatActivity {
             }
 
             class Holder extends RecyclerView.ViewHolder {
-                CardView Call;
+                CardView Call,Dtails;
                 TextView name ,desc,campName;
                 public Holder(@NonNull View itemView) {
                     super(itemView);
                     Call=itemView.findViewById(R.id.call);
+                    Dtails=itemView.findViewById(R.id.Dtails);
                     name=itemView.findViewById(R.id.name);
                     desc=itemView.findViewById(R.id.desc);
                     campName=itemView.findViewById(R.id.campName);

@@ -1,6 +1,5 @@
 package com.analah;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -15,9 +14,11 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.support.v7.app.ActionBar;
 import android.util.Base64;
 import android.view.Gravity;
 import android.view.View;
@@ -26,6 +27,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
@@ -77,6 +79,18 @@ public class Global {
             view = new View(activity);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static void setTitle(String title,Context context,ActionBar actionBar){
+        TextView textView = new TextView(context);
+        textView.setText(title);
+        textView.setTextSize(20);
+        textView.setTypeface(null, Typeface.BOLD);
+        textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        textView.setGravity(Gravity.CENTER);
+        textView.setTextColor(context.getResources().getColor(R.color.white));
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setCustomView(textView);
     }
 
     public static void diloge(final Context context ,String Title ,String Message){
