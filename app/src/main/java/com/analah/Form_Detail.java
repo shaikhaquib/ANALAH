@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -46,7 +47,7 @@ public class Form_Detail extends AppCompatActivity {
         setContentView(R.layout.activity_form_detail);
 
         ActionBar actionBar = getSupportActionBar();
-        Global.setTitle("Deatails",Form_Detail.this,actionBar);
+        Global.actionbar(Form_Detail.this,actionBar,"Details");
 
 
         session = new SessionManager(getApplicationContext());
@@ -93,6 +94,18 @@ public class Form_Detail extends AppCompatActivity {
         JSON = "{\"session\":\""+Global.Session+"\",\"module_name\":\"Leads\",\"id\":\""+getIntent().getStringExtra("id")+"\",\"select_fields\":[\"id\",\"name\",\"phone_mobile\",\"account_name\",\"email1\",\"phone_work\",\"title\",\"department\",\"description\",\"status\",\"lead_source\"],\"link_name_to_fields_array \":0,\"track_view\":\"false\"}";
         getDetails();
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void getDetails() {
         progressDialog.setMessage("Authenticating..");
         progressDialog.setCancelable(false);

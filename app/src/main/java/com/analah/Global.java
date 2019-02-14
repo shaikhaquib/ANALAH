@@ -81,18 +81,21 @@ public class Global {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public static void setTitle(String title,Context context,ActionBar actionBar){
-        TextView textView = new TextView(context);
-        textView.setText(title);
-        textView.setTextSize(20);
-        textView.setTypeface(null, Typeface.BOLD);
-        textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        textView.setGravity(Gravity.CENTER);
-        textView.setTextColor(context.getResources().getColor(R.color.white));
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(textView);
+    public static void actionbar(Activity activity , ActionBar abar , String title){
+        View viewActionBar = activity.getLayoutInflater().inflate(R.layout.center_title, null);
+        ActionBar.LayoutParams params = new ActionBar.LayoutParams( //Center the textview in the ActionBar !
+                ActionBar.LayoutParams.WRAP_CONTENT,
+                ActionBar.LayoutParams.MATCH_PARENT,
+                Gravity.CENTER);
+        TextView textviewTitle = (TextView) viewActionBar.findViewById(R.id.actionbar_textview);
+        textviewTitle.setText(title);
+        abar.setCustomView(viewActionBar, params);
+        abar.setDisplayShowCustomEnabled(true);
+        abar.setDisplayShowTitleEnabled(false);
+        abar.setHomeButtonEnabled(true);
+        abar.setDisplayHomeAsUpEnabled(true);
+        abar.setDisplayShowHomeEnabled(true);
     }
-
     public static void diloge(final Context context ,String Title ,String Message){
 
         AlertDialog.Builder builder;
