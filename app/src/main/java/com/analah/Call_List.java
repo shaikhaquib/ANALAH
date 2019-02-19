@@ -141,9 +141,11 @@ public class Call_List extends AppCompatActivity {
                                         startActivityForResult(intent, REQUEST_CODE);
                                     } else {
                                         Intent intent = new Intent(getApplicationContext(), TService.class);
+                                        intent.putExtra("id",model.id);
                                         startService(intent);
                                         Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+model.Phone_no));
                                         startActivity(intent1);
+
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();

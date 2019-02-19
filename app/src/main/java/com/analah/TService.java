@@ -8,25 +8,41 @@ import android.content.IntentFilter;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.FileObserver;
 import android.os.Handler;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 
 
 public class TService extends Service {
     MediaRecorder recorder;
     File audiofile;
-    String name, phonenumber;
+    String name, phonenumber,id,set_entry_JSON,set_entry_id;
     String audio_format;
     public String Audio_Type;
     int audioSource;
@@ -62,7 +78,10 @@ public class TService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // final String terminate =(String)
-        //        // intent.getExtras().get("terminate");//
+              id= intent.getStringExtra("id");
+              set_entry_JSON = "{\"session\":\""+Global.Session+"\"," +
+                      "\"module_name\":\"Notes\",\"name_value_list\":[\"name\",\"value\"]}";
+        set_Entry();
         //        // intent.getStringExtra("terminate");
         //        // Log.d("TAG", "service started");
         //        //
@@ -85,6 +104,88 @@ public class TService extends Service {
         // stopSelf();
         // }
         return START_NOT_STICKY;
+    }
+
+    private void set_Entry() {
+        StringRequest stringRequest = new StringRequest(StringRequest.Method.POST, "http://analah.demobox.online/service/v4_1/rest.php", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    JSONObject object = new JSONObject(response);
+                    set_entry_JSON = "{\"session\":\""+Global.Session+"\"," +
+                            "\"module_name\":\"Leads\"," +
+                            "\"module_id\":\""+id+"\"," +
+                            "\"link_field_name\":\"notes\"," +
+                            "\"related_ids\":[\""+object.getString("id")+"\"]}";
+                    set_relationship(set_entry_JSON);
+
+
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map <String,String> param = new HashMap<String,String>();
+
+                param.put("method","set_entry");
+                param.put("input_type","JSON");
+                param.put("response_type","JSON");
+                param.put("rest_data",set_entry_JSON);
+                return param;
+            }
+        };
+        AppController.getInstance().addToRequestQueue(stringRequest);
+
+
+    }
+
+    private void set_relationship(final String RestData) {
+        StringRequest stringRequest = new StringRequest(StringRequest.Method.POST, "http://analah.demobox.online/service/v4_1/rest.php", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    JSONObject object = new JSONObject(response);
+
+
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map <String,String> param = new HashMap<String,String>();
+
+                param.put("method","set_relationship");
+                param.put("input_type","JSON");
+                param.put("response_type","JSON");
+                param.put("rest_data",RestData);
+                return param;
+            }
+        };
+        AppController.getInstance().addToRequestQueue(stringRequest);
+
+
     }
 
     public class CallBr extends BroadcastReceiver {
@@ -113,6 +214,31 @@ public class TService extends Service {
                             recorder.stop();
                             recordstarted = false;
                             context.startActivity(new Intent(context,Call_List.class));
+
+                            byte[] bytes = new byte[0];
+                            try {
+                                bytes = FileUtils.readFileToByteArray(audiofile);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            String encoded = Base64.encodeToString(bytes, 0);
+                            Log.d("~~~~~~~~ Encoded: ", encoded);
+
+                            byte[] decoded = Base64.decode(encoded, 0);
+                            Log.d("~~~~~~~~ Decoded: ", Arrays.toString(decoded));
+
+                            try
+                            {
+                                File file2 = new File(Environment.getExternalStorageDirectory() + "/hello-5.wav");
+                                FileOutputStream os = new FileOutputStream(file2, true);
+                                os.write(decoded);
+                                os.close();
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                            }
 /*
                             try {
                               //  postFile(audiofile.getAbsolutePath());
@@ -166,5 +292,19 @@ public class TService extends Service {
         }
         recorder.start();
         recordstarted = true;
+        MyFileObserver fb = new MyFileObserver(audiofile.getAbsolutePath(), FileObserver.CLOSE_WRITE);
+        fb.startWatching();
+
+    }
+    class MyFileObserver extends FileObserver {
+
+        public MyFileObserver (String path, int mask) {
+            super(path, mask);
+        }
+
+        public void onEvent(int event, String path) {
+            // start playing
+            Toast.makeText(context, "REJECT || DISCO", Toast.LENGTH_LONG).show();
+        }
     }
 }
