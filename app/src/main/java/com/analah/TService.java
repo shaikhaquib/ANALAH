@@ -8,11 +8,9 @@ import android.content.IntentFilter;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.FileObserver;
 import android.os.Handler;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
-import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,7 +20,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -118,6 +115,8 @@ public class TService extends Service {
                             "\"module_id\":\""+id+"\"," +
                             "\"link_field_name\":\"notes\"," +
                             "\"related_ids\":[\""+object.getString("id")+"\"]}";
+
+                    Global.set_Entry_ID = object.getString("id");
                     set_relationship(set_entry_JSON);
 
 
@@ -213,32 +212,7 @@ public class TService extends Service {
                         if (recordstarted) {
                             recorder.stop();
                             recordstarted = false;
-                            context.startActivity(new Intent(context,Call_List.class));
-
-                            byte[] bytes = new byte[0];
-                            try {
-                                bytes = FileUtils.readFileToByteArray(audiofile);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            String encoded = Base64.encodeToString(bytes, 0);
-                            Log.d("~~~~~~~~ Encoded: ", encoded);
-
-                            byte[] decoded = Base64.decode(encoded, 0);
-                            Log.d("~~~~~~~~ Decoded: ", Arrays.toString(decoded));
-
-                            try
-                            {
-                                File file2 = new File(Environment.getExternalStorageDirectory() + "/hello-5.wav");
-                                FileOutputStream os = new FileOutputStream(file2, true);
-                                os.write(decoded);
-                                os.close();
-                            }
-                            catch (Exception e)
-                            {
-                                e.printStackTrace();
-                            }
+                            context.startActivity(new Intent(context,Call_List.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 /*
                             try {
                               //  postFile(audiofile.getAbsolutePath());
@@ -269,7 +243,7 @@ public class TService extends Service {
         }
         String file_name = "Record";
         try {
-            audiofile = File.createTempFile(file_name, ".mp3", sampleDir);
+            Global.audiofile = File.createTempFile(file_name, ".mp3", sampleDir);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -281,7 +255,7 @@ public class TService extends Service {
         recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        recorder.setOutputFile(audiofile.getAbsolutePath());
+        recorder.setOutputFile(Global.audiofile.getAbsolutePath());
         try {
             recorder.prepare();
 
@@ -292,19 +266,5 @@ public class TService extends Service {
         }
         recorder.start();
         recordstarted = true;
-        MyFileObserver fb = new MyFileObserver(audiofile.getAbsolutePath(), FileObserver.CLOSE_WRITE);
-        fb.startWatching();
-
-    }
-    class MyFileObserver extends FileObserver {
-
-        public MyFileObserver (String path, int mask) {
-            super(path, mask);
-        }
-
-        public void onEvent(int event, String path) {
-            // start playing
-            Toast.makeText(context, "REJECT || DISCO", Toast.LENGTH_LONG).show();
-        }
     }
 }

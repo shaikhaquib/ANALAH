@@ -31,6 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -44,9 +45,11 @@ import java.util.Date;
  */
 
 public class Global {
+    public static File audiofile;
     public static final int CONNECTION_TIMEOUT = 10000;
     public static final int READ_TIMEOUT = 15000;
     public static String Session =null ;
+    public static String set_Entry_ID =null ;
     public static String Company_Type = null;
     public static String Company_Logo = null;
     public static String Company_Name = null;
