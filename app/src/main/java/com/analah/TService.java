@@ -68,7 +68,6 @@ public class TService extends Service {
     @Override
     public void onDestroy() {
         Log.d("service", "destroy");
-
         super.onDestroy();
     }
 

@@ -20,7 +20,12 @@
         android:roundIcon="@drawable/ic_analah"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:ignore="GoogleAppIndexingWarning">
+
+        <uses-library android:name="org.apache.http.legacy" android:required="false" />
+
+
         <activity android:name=".Form_Detail"/>
         <activity
             android:name=".Call_List"
@@ -35,6 +40,8 @@
             </intent-filter>
         </activity>
         <service android:name=".TService" />
+
+        <receiver android:name=".TService$CallBr"/>
 
         <receiver android:name=".CallReceiver" >
             <intent-filter>

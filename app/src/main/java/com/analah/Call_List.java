@@ -97,7 +97,7 @@ public class Call_List extends AppCompatActivity {
                 final Holder holder = (Holder)viewHolder;
 
                 final Calling_model model = models.get(i);
-                holder.Call.setTag(i);
+                    holder.Call.setTag(i);
                 holder.Dtails.setTag(i);
 
                 holder.name.setText(model.Name);
@@ -142,7 +142,7 @@ public class Call_List extends AppCompatActivity {
                                     } else {
                                         Intent intent = new Intent(getApplicationContext(), TService.class);
                                         startService(intent);
-                                        Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+model.Phone_no));
+                                        Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:8425918611"));
                                         startActivity(intent1);
                                     }
                                 } catch (Exception e) {
