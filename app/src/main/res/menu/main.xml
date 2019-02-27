@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-<item android:id="@+id/logout" android:title="Logout" app:showAsAction="ifRoom" android:icon="@android:drawable/ic_lock_power_off" android:iconTint="@color/white"/>
+    <item
+        android:id="@+id/notification"
+        android:actionLayout="@layout/action_bar_notifitcation_icon"
+        android:icon="@drawable/ic_notifications"
+        android:iconTint="@color/white"
+        android:title="Logout"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/logout"
+        android:icon="@android:drawable/ic_lock_power_off"
+        android:iconTint="@color/white"
+        android:title="Notification"
+        app:showAsAction="ifRoom" />
 </menu>

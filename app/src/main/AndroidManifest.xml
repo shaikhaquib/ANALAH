@@ -28,10 +28,17 @@
 
         <activity android:name=".Form_Detail"/>
         <activity
-            android:name=".Call_List"
+            android:name=".Activity.Call_List"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Activity.Notification"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            android:parentActivityName=".Activity.Call_List"/>
+        <activity
+            android:name=".Activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,11 +46,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".TService" />
 
-        <receiver android:name=".TService$CallBr"/>
 
-        <receiver android:name=".CallReceiver" >
+        <receiver android:name=".CallReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
@@ -52,21 +57,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver
-            android:name=".DeviceAdminDemo"
-            android:description="@string/device_description"
-            android:label="@string/device_admin_label"
-            android:permission="android.permission.BIND_DEVICE_ADMIN">
-            <meta-data
-                android:name="android.app.device_admin"
-                android:resource="@xml/my_admin" />
-
-            <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
-                <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED" />
-            </intent-filter>
-        </receiver>
+        <service android:name=".CORE.MyNotificationService"/>
     </application>
 
 </manifest>

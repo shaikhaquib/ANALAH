@@ -1,24 +1,20 @@
-package com.analah;
+package com.analah.Activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Typeface;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
+import com.analah.AppController;
 import com.analah.CORE.SQLiteHandler;
 import com.analah.CORE.SessionManager;
+import com.analah.Global;
 import com.analah.Login_responce.Response_Login;
+import com.analah.R;
 import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;

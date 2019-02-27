@@ -218,28 +218,6 @@
                     android:textSize="16sp" />
             </TableRow>
 
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_marginTop="8dp">
-
-                <TextView
-                    android:paddingTop="8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1"
-                    android:text="Upload Call Record : "
-                    android:textSize="14sp" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_column="2"
-                    android:background="#e8e8e8"
-                    android:paddingTop="8dp"
-                    android:paddingLeft="8dp"
-                    android:textSize="16sp" />
-            </TableRow>
 
 
         </TableLayout>
@@ -251,6 +229,7 @@
             app:cardBackgroundColor="@color/colorPrimary"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
+            android:visibility="gone"
             app:cardCornerRadius="8dp">
 
             <TextView
@@ -269,11 +248,13 @@
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone">
 
             <TableRow
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+                android:layout_height="fill_parent"
+                >
 
 
                 <RadioButton
@@ -449,6 +430,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
+                android:visibility="gone"
                 app:cardBackgroundColor="@color/colorPrimary"
                 app:cardCornerRadius="8dp">
 
@@ -467,6 +449,7 @@
 
         <EditText
             android:id="@+id/cmpDesc"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_column="2"
@@ -479,17 +462,61 @@
             android:textSize="16sp" />
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginTop="50dp">
 
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Upload Call Record :"
+                android:layout_weight="4"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/fileName"
+                android:editable="false"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="6"
+                android:background="#e8e8e8"
+                android:paddingTop="8dp"
+                android:paddingLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:textSize="16sp" />
+
+
+            <android.support.v7.widget.CardView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:cardBackgroundColor="@color/colorPrimary"
+                app:cardCornerRadius="15dp"
+                android:onClick="OpenFile">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_mic_black_24dp"/>
+
+            </android.support.v7.widget.CardView>
+
+
+        </LinearLayout>
 
         <Button
+            android:id="@+id/save"
             android:layout_width="180dp"
             android:layout_height="40dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="142dp"
-            android:id="@+id/login"
-            android:background="@color/colorPrimary"
             android:text="Save"
+            android:visibility="gone"
+            android:background="@color/colorPrimary"
             android:layout_margin="@dimen/margin_16"
             android:layout_gravity="center"
             android:textColor="@color/white" />
