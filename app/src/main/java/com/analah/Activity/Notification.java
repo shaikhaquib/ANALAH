@@ -2,40 +2,35 @@ package com.analah.Activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.analah.AppController;
 import com.analah.CORE.SQLiteHandler;
 import com.analah.CORE.SessionManager;
 import com.analah.Calling_model;
-import com.analah.Form_Detail;
 import com.analah.Global;
 import com.analah.R;
+import com.analah.TService;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -134,10 +129,15 @@ public class Notification extends AppCompatActivity {
 
                                 try {
                                     // Initiate DevicePolicyManager.
-                                    Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+model.Phone_no));
+
+                                    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O){
+                                        Intent intent = new Intent(getApplicationContext(), TService.class);
+                                        intent.putExtra("id",model.id);
+                                        startService(intent);
+                                    }
+                                    Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:8425918611"));
                                     startActivity(intent1);
-                                    String s = "{\"session\":\""+Global.Session+"\",\"module_name\":\"C_Call_Initiate\",\"name_value_list\":[{\"name\":\"id\",\"value\":\""+model.id+"\"},{\"name\":\"lead_status_c\",\"value\":\"true\"}]}";
-                                    setEntry(s);
+
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -187,11 +187,31 @@ public class Notification extends AppCompatActivity {
                     JSONObject object = new JSONObject(response);
 
                     if (object.has("name")){
-                        session.setLogin(false);
-                        db.deleteUsers();
-                        Global.diloge(Notification.this,object.getString("name"),object.getString("description"));
-                        startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                        finish();
+
+
+
+                        AlertDialog.Builder builder;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            builder = new AlertDialog.Builder(Notification.this, android.R.style.Theme_Material_Light_Dialog_Alert);
+                        } else {
+                            builder = new AlertDialog.Builder(Notification.this);
+                        }
+                        builder.setCancelable(false);
+                        builder.setTitle(object.getString("name"))
+                                .setMessage(object.getString("description"))
+                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        session.setLogin(false);
+                                        dialog.dismiss();
+                                        db.deleteUsers();
+                                        startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                                        finish();
+                                    }
+                                })
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
+
+
                     }else {
                        /* Gson gson = new Gson();
                         Call_Responce notificationResponse = gson.fromJson(response, Call_Responce.class);*/
@@ -324,11 +344,26 @@ public class Notification extends AppCompatActivity {
                     JSONObject object = new JSONObject(response);
 
                     if (object.has("name")){
-                        session.setLogin(false);
-                        db.deleteUsers();
-                        Global.diloge(Notification.this,object.getString("name"),object.getString("description"));
-                        startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                        finish();
+                        AlertDialog.Builder builder;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            builder = new AlertDialog.Builder(Notification.this, android.R.style.Theme_Material_Light_Dialog_Alert);
+                        } else {
+                            builder = new AlertDialog.Builder(Notification.this);
+                        }
+                        builder.setCancelable(false);
+                        builder.setTitle(object.getString("name"))
+                                .setMessage(object.getString("description"))
+                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        session.setLogin(false);
+                                        dialog.dismiss();
+                                        db.deleteUsers();
+                                        startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                                        finish();
+                                    }
+                                })
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
                     }else {
                         getCalling();
                     }

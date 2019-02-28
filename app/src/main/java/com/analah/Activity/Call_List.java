@@ -2,13 +2,14 @@ package com.analah.Activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -16,13 +17,11 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,8 +29,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.analah.AppController;
@@ -39,9 +36,9 @@ import com.analah.CORE.MyNotificationService;
 import com.analah.CORE.SQLiteHandler;
 import com.analah.CORE.SessionManager;
 import com.analah.Calling_model;
-import com.analah.Form_Detail;
 import com.analah.Global;
 import com.analah.R;
+import com.analah.TService;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -145,14 +142,18 @@ public class Call_List extends AppCompatActivity {
                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                        context.startActivity(intent);*/
 
-                       /* Uri packageURI = Uri.parse("package:"+"dealwithusmailcom.dwsales");
-                        Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
-                        context.startActivity(uninstallIntent);*/
 
                                 try {
                                     // Initiate DevicePolicyManager.
-                                        Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+model.Phone_no));
-                                        startActivity(intent1);
+
+                                    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O){
+                                    Intent intent = new Intent(getApplicationContext(), TService.class);
+                                    intent.putExtra("id",model.id);
+                                    startService(intent);
+                                    }
+                                    Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:8425918611"));
+                                    startActivity(intent1);
+
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -234,11 +235,31 @@ public class Call_List extends AppCompatActivity {
                     JSONObject object = new JSONObject(response);
 
                     if (object.has("name")){
-                        session.setLogin(false);
-                        db.deleteUsers();
-                        Global.diloge(Call_List.this,object.getString("name"),object.getString("description"));
-                        startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                        finish();
+
+
+
+                        AlertDialog.Builder builder;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            builder = new AlertDialog.Builder(Call_List.this, android.R.style.Theme_Material_Light_Dialog_Alert);
+                        } else {
+                            builder = new AlertDialog.Builder(Call_List.this);
+                        }
+                        builder.setCancelable(false);
+                        builder.setTitle(object.getString("name"))
+                                .setMessage(object.getString("description"))
+                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        session.setLogin(false);
+                                        dialog.dismiss();
+                                        db.deleteUsers();
+                                        startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                                        finish();
+                                    }
+                                })
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
+
+
                     }else {
                        /* Gson gson = new Gson();
                         Call_Responce notificationResponse = gson.fromJson(response, Call_Responce.class);*/
@@ -406,11 +427,11 @@ public class Call_List extends AppCompatActivity {
                     JSONObject object = new JSONObject(response);
 
                     if (object.has("name")){
-                        session.setLogin(false);
-                        db.deleteUsers();
-                        Global.diloge(Call_List.this,object.getString("name"),object.getString("description"));
-                        startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                        finish();
+                        //session.setLogin(false);
+                       // db.deleteUsers();
+                      //  Global.diloge(Call_List.this,object.getString("name"),object.getString("description"));
+                       // startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                      //  finish();
                     }else {
                        /* Gson gson = new Gson();
                         Call_Responce notificationResponse = gson.fromJson(response, Call_Responce.class);*/

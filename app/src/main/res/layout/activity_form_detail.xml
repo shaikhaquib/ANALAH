@@ -10,10 +10,11 @@
     android:layout_marginLeft="16dp"
     android:layout_marginTop="16dp"
     app:cardCornerRadius="6dp"
-    tools:context=".Form_Detail">
+    tools:context=".Activity.Form_Detail">
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -67,6 +68,7 @@
                     android:layout_column="2"
                     android:paddingTop="8dp"
                     android:paddingLeft="8dp"
+                    android:enabled="false"
                     android:background="#e8e8e8"
                     android:textSize="16sp" />
             </TableRow>
@@ -89,6 +91,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_column="2"
+                    android:enabled="false"
                     android:background="#e8e8e8"
                     android:paddingTop="8dp"
                     android:paddingLeft="8dp"
@@ -113,6 +116,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_column="2"
+                    android:enabled="false"
                     android:background="#e8e8e8"
                     android:paddingTop="8dp"
                     android:paddingLeft="8dp"
@@ -137,6 +141,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_column="2"
+                    android:enabled="false"
                     android:background="#e8e8e8"
                     android:paddingTop="8dp"
                     android:paddingLeft="8dp"
@@ -165,6 +170,7 @@
                     android:layout_height="wrap_content"
                     android:layout_column="2"
                     android:background="#e8e8e8"
+                    android:enabled="false"
                     android:lines="3"
                     android:paddingTop="8dp"
                     android:paddingLeft="8dp"
@@ -190,6 +196,7 @@
                     android:layout_column="2"
                     android:background="#e8e8e8"
                     android:paddingTop="8dp"
+                    android:enabled="false"
                     android:paddingLeft="8dp"
                     android:textSize="16sp" />
             </TableRow>
@@ -212,6 +219,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_column="2"
+                    android:enabled="false"
                     android:background="#e8e8e8"
                     android:paddingTop="8dp"
                     android:paddingLeft="8dp"

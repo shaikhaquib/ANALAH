@@ -1,38 +1,20 @@
 package com.analah;
 
-import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.media.MediaRecorder;
-import android.net.Uri;
-import android.os.Environment;
-import android.provider.ContactsContract;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 
-/**
- * Created by haider on 9/22/2018.
- */
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.telephony.TelephonyManager;
 
 public abstract class PhonecallReceiver extends BroadcastReceiver {
+
+    //The receiver will be recreated whenever android feels like it.  We need a static variable to remember data between instantiations
 
     private static int lastState = TelephonyManager.CALL_STATE_IDLE;
     private static Date callStartTime;
     private static boolean isIncoming;
     private static String savedNumber;  //because the passed incoming is only valid in ringing
-    String name;
-
-    MediaRecorder recorder;
-    TelephonyManager telManager;
-    boolean recordStarted;
-    Context contxt;
-    File audiofile = null;
 
 
     @Override
@@ -41,137 +23,42 @@ public abstract class PhonecallReceiver extends BroadcastReceiver {
         //We listen to two intents.  The new outgoing call only tells us of an outgoing call.  We use it to get the number.
         if (intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL")) {
             savedNumber = intent.getExtras().getString("android.intent.extra.PHONE_NUMBER");
-
-        } else {
+        }
+        else{
             String stateStr = intent.getExtras().getString(TelephonyManager.EXTRA_STATE);
-            String incomingCallerNumber = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
-            String incomingCallerName = getContactDisplayNameByNumber(incomingCallerNumber, context);
-
+            String number = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
             int state = 0;
-            if (stateStr.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
+            if(stateStr.equals(TelephonyManager.EXTRA_STATE_IDLE)){
                 state = TelephonyManager.CALL_STATE_IDLE;
-            } else if (stateStr.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
+            }
+            else if(stateStr.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)){
                 state = TelephonyManager.CALL_STATE_OFFHOOK;
-            } else if (stateStr.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
+            }
+            else if(stateStr.equals(TelephonyManager.EXTRA_STATE_RINGING)){
                 state = TelephonyManager.CALL_STATE_RINGING;
             }
 
 
-            onCallStateChanged(context, state, incomingCallerNumber, incomingCallerName, intent);
+            onCallStateChanged(context, state, number);
         }
     }
 
-    private void startRecording(Context context, Intent intent) {
+    //Derived classes should override these to respond to specific events of interest
+    protected abstract void onIncomingCallReceived(Context ctx, String number, Date start);
+    protected abstract void onIncomingCallAnswered(Context ctx, String number, Date start);
+    protected abstract void onIncomingCallEnded(Context ctx, String number, Date start, Date end);
 
-        this.contxt = context;
-        recorder = new MediaRecorder();
-        String action = intent.getAction();
+    protected abstract void onOutgoingCallStarted(Context ctx, String number, Date start);
+    protected abstract void onOutgoingCallEnded(Context ctx, String number, Date start, Date end);
 
-        try {
-            File sampleDir = Environment.getExternalStorageDirectory().getAbsoluteFile();
-            sampleDir =new File(Environment.getExternalStorageDirectory(), "/analah");
+    protected abstract void onMissedCall(Context ctx, String number, Date start);
 
-            if (!sampleDir.exists()) {
-                sampleDir.mkdirs();
-            }
-            String file_name = "New_Record";
-            try {
-                audiofile = File.createTempFile(file_name, ".mp3", sampleDir);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION);
-            recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            recorder.setOutputFile(audiofile.getAbsolutePath());
-            recorder.prepare();
-            recorder.start();
-            recordStarted = true;
-            telManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            telManager.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    //Deals with actual events
 
-    }
-
-
-    private final PhoneStateListener phoneListener = new PhoneStateListener() {
-        @Override
-        public void onCallStateChanged(int state, String incomingNumber) {
-            try {
-                switch (state) {
-                    case TelephonyManager.CALL_STATE_RINGING: {
-                        break;
-                    }
-                    case TelephonyManager.CALL_STATE_OFFHOOK: {
-                        break;
-                    }
-                    case TelephonyManager.CALL_STATE_IDLE: {
-                        if (recordStarted) {
-                            recorder.stop();
-                            recordStarted = false;
-                        }
-                        break;
-                    }
-                    default: {
-                    }
-                }
-            } catch (Exception ex) {
-
-            }
-        }
-    };
-
-
-    protected void onIncomingCallStarted(Context ctx, String number, Date start, String name, boolean isIncoming, String path) {
-    }
-
-    protected void onOutgoingCallStarted(Context ctx, String number, Date start, String name, boolean isIncoming, String path) {
-    }
-
-    protected void onIncomingCallEnded(Context ctx, String number, Date start, Date end) {
-    }
-
-    protected void onOutgoingCallEnded(Context ctx, String number, Date start, Date end) {
-    }
-
-    protected void onMissedCall(Context ctx, String number, Date start) {
-    }
-
-    public String getContactDisplayNameByNumber(String number, Context context) {
-        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
-        name = "Incoming call from";
-
-        ContentResolver contentResolver = context.getContentResolver();
-        Cursor contactLookup = contentResolver.query(uri, null, null, null, null);
-
-        try {
-            if (contactLookup != null && contactLookup.getCount() > 0) {
-                contactLookup.moveToNext();
-                name = contactLookup.getString(contactLookup.getColumnIndex(ContactsContract.Data.DISPLAY_NAME));
-                // this.id =
-                // contactLookup.getString(contactLookup.getColumnIndex(ContactsContract.Data.CONTACT_ID));
-                // String contactId =
-                // contactLookup.getString(contactLookup.getColumnIndex(BaseColumns._ID));
-            } else {
-                name = "Unknown number";
-            }
-        } finally {
-            if (contactLookup != null) {
-                contactLookup.close();
-            }
-        }
-
-        return name;
-    }
-
-    public void onCallStateChanged(Context context, int state, String number, String name, Intent intent) {
-        if (lastState == state) {
+    //Incoming call-  goes from IDLE to RINGING when it rings, to OFFHOOK when it's answered, to IDLE when its hung up
+    //Outgoing call-  goes from IDLE to OFFHOOK when it dials out, to IDLE when hung up
+    public void onCallStateChanged(Context context, int state, String number) {
+        if(lastState == state){
             //No change, debounce extras
             return;
         }
@@ -180,35 +67,33 @@ public abstract class PhonecallReceiver extends BroadcastReceiver {
                 isIncoming = true;
                 callStartTime = new Date();
                 savedNumber = number;
-               // startRecording(context, intent);
-              //  onIncomingCallStarted(context, number, callStartTime, name, isIncoming, audiofile.getAbsolutePath());
+                onIncomingCallReceived(context, number, callStartTime);
                 break;
             case TelephonyManager.CALL_STATE_OFFHOOK:
-                //offhook are pickups of incoming calls.  Nothing done on them
-                if (lastState != TelephonyManager.CALL_STATE_RINGING) {
+                //Transition of ringing->offhook are pickups of incoming calls.  Nothing done on them
+                if(lastState != TelephonyManager.CALL_STATE_RINGING){
                     isIncoming = false;
                     callStartTime = new Date();
-                    startRecording(context, intent);
-                    onOutgoingCallStarted(context, savedNumber, callStartTime, name, isIncoming, audiofile.getAbsolutePath());
-
+                    onOutgoingCallStarted(context, savedNumber, callStartTime);
                 }
+                else
+                {
+                    isIncoming = true;
+                    callStartTime = new Date();
+                    onIncomingCallAnswered(context, savedNumber, callStartTime);
+                }
+
                 break;
             case TelephonyManager.CALL_STATE_IDLE:
                 //Went to idle-  this is the end of a call.  What type depends on previous state(s)
-                if (lastState == TelephonyManager.CALL_STATE_RINGING) {
+                if(lastState == TelephonyManager.CALL_STATE_RINGING){
                     //Ring but no pickup-  a miss
                     onMissedCall(context, savedNumber, callStartTime);
-                } else if (isIncoming) {
-                    if (recordStarted) {
-                        recorder.stop();
-                        recordStarted = false;
-                    }
+                }
+                else if(isIncoming){
                     onIncomingCallEnded(context, savedNumber, callStartTime, new Date());
-                } else {
-                    if (recordStarted) {
-                        recorder.stop();
-                        recordStarted = false;
-                    }
+                }
+                else{
                     onOutgoingCallEnded(context, savedNumber, callStartTime, new Date());
                 }
                 break;
