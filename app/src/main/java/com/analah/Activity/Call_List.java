@@ -76,7 +76,7 @@ public class Call_List extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calllist);
-        setTitle("Lead List");
+
         session = new SessionManager(getApplicationContext());
         db = new SQLiteHandler(this);
         progressDialog = new ProgressDialog(this);
@@ -85,6 +85,8 @@ public class Call_List extends AppCompatActivity {
         Global.customerid= user.get("customer_id");
         Global.Session = user.get("lang");
 
+
+        setTitle(Global.name);
         rv_Callist=findViewById(R.id.rv_Callist);
         manager = new LinearLayoutManager(getApplicationContext());
         rv_Callist.setLayoutManager(manager);
