@@ -86,14 +86,15 @@ public class Call_List extends AppCompatActivity {
         Global.Session = user.get("lang");
 
 
-        setTitle(Global.name);
+        setTitle("CALL LIST");
+        getSupportActionBar().setSubtitle(Global.name);
         rv_Callist=findViewById(R.id.rv_Callist);
         manager = new LinearLayoutManager(getApplicationContext());
         rv_Callist.setLayoutManager(manager);
 
         JSON = "{\"session\":\""+Global.Session+"\"," +
                 "\"module_name\":\"Leads\",\"query\":\"\"," +
-                "\"order_by\":\"\",\"offset\":0," +
+                "\"order_by\":\"date_entered desc\",\"offset\":0," +
                 "\"select_fields\":[\"id\",\"name\",\"phone_mobile\"],\"max_results\":30,\"deleted\":0}\n";
 
         CountJSON = "{\"session\":\""+Global.Session+"\",\"module_name\":\"C_Call_Initiate\",\"query\":\"c_call_initiate_cstm.lead_status_c='false' and c_call_initiate_cstm.lead_created_by_id_c='"+Global.customerid+"'\",\"order_by\":\"\",\"offset\":0,\"select_fields\":[\"id\",\"name\",\"lead_phone_c\",\"lead_created_by_id_c\",\"lead_status_c\",\"lead_bean_id_c\",\"auto_id_c\"],\"max_results\":5,\"deleted\":0}";
@@ -153,7 +154,7 @@ public class Call_List extends AppCompatActivity {
                                     intent.putExtra("id",model.id);
                                     startService(intent);
                                     }
-                                    Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:8425918611"));
+                                    Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+model.Phone_no));
                                     startActivity(intent1);
 
 
