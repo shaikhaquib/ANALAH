@@ -1,12 +1,10 @@
 package com.analah.CORE;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,19 +13,15 @@ import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Settings;
+import android.os.ResultReceiver;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-
-import com.analah.Activity.Call_List;
-import com.analah.Activity.MainActivity;
 import com.analah.AppController;
-import com.analah.Calling_model;
 import com.analah.Global;
 import com.analah.R;
 import com.android.volley.AuthFailureError;
@@ -39,16 +33,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -64,6 +48,7 @@ public class MyNotificationService extends Service {
     String fetch_data="true",JSON;
     int shid;
     public static final String MY_PREFS_NAME = "MyPrefsFile";
+    ResultReceiver myReciver;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -80,6 +65,7 @@ public class MyNotificationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        myReciver=intent.getParcelableExtra("myReciver");
 
 	/*	sessionId=intent.getStringExtra("sid");
 		UserId=intent.getStringExtra("uid");
@@ -156,8 +142,9 @@ public class MyNotificationService extends Service {
                                String subject=Name_Value_list.getJSONObject("name").getString("value");
 
                                createNotification(title,subject);
-
-
+                               Bundle bundle = new Bundle();
+                               bundle.putString("Notification","Notification");
+                               myReciver.send(18,bundle);
 
                            }
 

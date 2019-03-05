@@ -58,6 +58,7 @@ public class Notification extends AppCompatActivity {
     ProgressDialog progressDialog;
     String JSON;
 
+
     HashMap<String, String> user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +114,8 @@ public class Notification extends AppCompatActivity {
                     @SuppressLint("MissingPermission")
                     @Override
                     public void onClick(View view) {
-
+                        String s = "{\"session\":\""+Global.Session+"\",\"module_name\":\"C_Call_Initiate\",\"name_value_list\":[{\"name\":\"id\",\"value\":\""+model.id+"\"},{\"name\":\"lead_status_c\",\"value\":\"true\"}]}";
+                        setEntry(s);
                         if (Build.VERSION.SDK_INT < 23) {
                             //Do not need to check the permission
                         } else {
@@ -135,7 +137,7 @@ public class Notification extends AppCompatActivity {
                                         intent.putExtra("id",model.id);
                                         startService(intent);
                                     }
-                                    Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:8425918611"));
+                                    Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+model.Phone_no));
                                     startActivity(intent1);
 
 
@@ -365,8 +367,8 @@ public class Notification extends AppCompatActivity {
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .show();
                     }else {
-                        getCalling();
-                    }
+                        startActivity(new Intent(getApplicationContext(),Notification.class));
+                   }
 
                 } catch (JSONException e) {
                     e.printStackTrace();

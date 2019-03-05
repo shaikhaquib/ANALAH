@@ -8,12 +8,15 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -22,6 +25,7 @@ import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -64,13 +68,22 @@ public class Call_List extends AppCompatActivity {
     private SQLiteHandler db;
     private SessionManager session;
     ProgressDialog progressDialog;
-    String JSON , CountJSON;
+    String JSON , CountJSON ,sorting;
     MenuItem menuItem;
+    boolean isSorting = false;
     HashMap<String, String> user;
     Boolean isScrolling = false;
     int currentItems, totalItems, scrollOutItems;
     LinearLayoutManager manager;
     int offset = 15 ;
+    public static final String MY_PREFS_NAME = "MyPrefsFile_sec";
+    private Handler handler =new Handler();
+
+
+    MyReciver myReciver;
+
+    String uid;
+    int shid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +98,7 @@ public class Call_List extends AppCompatActivity {
         Global.customerid= user.get("customer_id");
         Global.Session = user.get("lang");
 
+        myReciver=new MyReciver(handler);
 
         setTitle("CALL LIST");
         getSupportActionBar().setSubtitle(Global.name);
@@ -92,12 +106,13 @@ public class Call_List extends AppCompatActivity {
         manager = new LinearLayoutManager(getApplicationContext());
         rv_Callist.setLayoutManager(manager);
 
+        sorting =  "date_entered desc";
         JSON = "{\"session\":\""+Global.Session+"\"," +
                 "\"module_name\":\"Leads\",\"query\":\"\"," +
-                "\"order_by\":\"date_entered desc\",\"offset\":0," +
+                "\"order_by\":\""+sorting+"\",\"offset\":0," +
                 "\"select_fields\":[\"id\",\"name\",\"phone_mobile\"],\"max_results\":30,\"deleted\":0}\n";
 
-        CountJSON = "{\"session\":\""+Global.Session+"\",\"module_name\":\"C_Call_Initiate\",\"query\":\"c_call_initiate_cstm.lead_status_c='false' and c_call_initiate_cstm.lead_created_by_id_c='"+Global.customerid+"'\",\"order_by\":\"\",\"offset\":0,\"select_fields\":[\"id\",\"name\",\"lead_phone_c\",\"lead_created_by_id_c\",\"lead_status_c\",\"lead_bean_id_c\",\"auto_id_c\"],\"max_results\":5,\"deleted\":0}";
+        CountJSON = "{\"session\":\""+Global.Session+"\",\"module_name\":\"C_Call_Initiate\",\"query\":\"c_call_initiate_cstm.lead_status_c='false' and c_call_initiate_cstm.lead_created_by_id_c='"+Global.customerid+"'\",\"order_by\":\"date_entered desc\",\"offset\":0,\"select_fields\":[\"id\",\"name\",\"lead_phone_c\",\"lead_created_by_id_c\",\"lead_status_c\",\"lead_bean_id_c\",\"auto_id_c\"],\"max_results\":5,\"deleted\":0}";
 
         getCalling();
         getCount();
@@ -140,12 +155,6 @@ public class Call_List extends AppCompatActivity {
                             //Do not need to check the permission
                         } else {
                             if (checkAndRequestPermissions()) {
-                      /* Intent intent = new Intent(context, Main2Activity.class);
-                       intent.putExtra("mobielno",current.LeadMobile);
-                       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                       context.startActivity(intent);*/
-
-
                                 try {
                                     // Initiate DevicePolicyManager.
 
@@ -170,7 +179,7 @@ public class Call_List extends AppCompatActivity {
                     }
                 });
 
-                startService(new Intent(getApplicationContext(), MyNotificationService.class));
+                startService(new Intent(getApplicationContext(), MyNotificationService.class).putExtra("myReciver",myReciver));
             }
 
             @Override
@@ -217,7 +226,7 @@ public class Call_List extends AppCompatActivity {
 
                     JSON = "{\"session\":\""+Global.Session+"\"," +
                             "\"module_name\":\"Leads\",\"query\":\"\"," +
-                            "\"order_by\":\"\",\"offset\":"+String.valueOf(offset)+"," +
+                            "\"order_by\":\""+sorting+"\",\"offset\":"+String.valueOf(offset)+"," +
                             "\"select_fields\":[\"id\",\"name\",\"phone_mobile\"],\"max_results\":15,\"deleted\":0}\n";
 
                     getCalling();
@@ -315,21 +324,6 @@ public class Call_List extends AppCompatActivity {
 
     }
 
-/*
-    public void setTitle(String title){
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        TextView textView = new TextView(this);
-        textView.setText(title);
-        textView.setTextSize(20);
-        textView.setTypeface(null, Typeface.BOLD);
-        textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        textView.setGravity(Gravity.CENTER);
-        textView.setTextColor(getResources().getColor(R.color.white));
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(textView);
-    }
-*/
 
     private boolean checkAndRequestPermissions() {
         int CALLPERMITION = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE);
@@ -358,8 +352,7 @@ public class Call_List extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
 
@@ -381,6 +374,32 @@ public class Call_List extends AppCompatActivity {
                 break;
                 case R.id.notification:
                 startActivity(new Intent(getApplicationContext(),Notification.class));
+                break;
+                case R.id.sorting:
+                    if (isSorting){
+                        isSorting =false;
+                        item.setIcon(R.drawable.assending_order);
+                        sorting = "date_entered desc";
+                        models.clear();
+                        JSON = "{\"session\":\""+Global.Session+"\"," +
+                                "\"module_name\":\"Leads\",\"query\":\"\"," +
+                                "\"order_by\":\""+sorting+"\",\"offset\":"+String.valueOf(offset)+"," +
+                                "\"select_fields\":[\"id\",\"name\",\"phone_mobile\"],\"max_results\":15,\"deleted\":0}\n";
+
+                        rv_Callist.getAdapter().notifyDataSetChanged();
+                        getCalling();
+                    }else{
+                        item.setIcon(R.drawable.ic_desending_order);
+                        isSorting = true;
+                        sorting = "date_entered asc";
+                        models.clear();
+                        JSON = "{\"session\":\""+Global.Session+"\"," +
+                                "\"module_name\":\"Leads\",\"query\":\"\"," +
+                                "\"order_by\":\""+sorting+"\",\"offset\":"+String.valueOf(offset)+"," +
+                                "\"select_fields\":[\"id\",\"name\",\"phone_mobile\"],\"max_results\":15,\"deleted\":0}\n";
+                        rv_Callist.getAdapter().notifyDataSetChanged();
+                       getCalling();
+                    }
                 break;
 
         }
@@ -439,17 +458,54 @@ public class Call_List extends AppCompatActivity {
                        /* Gson gson = new Gson();
                         Call_Responce notificationResponse = gson.fromJson(response, Call_Responce.class);*/
 
-                       int Count = Integer.parseInt(object.getString("total_count"));
+                        int Count = Integer.parseInt(object.getString("total_count"));
 
-                       if (Count > 0){
-                           if (Count > 10)
-                              menuItem.setIcon(buildCounterDrawable(9,  R.drawable.ic_notifications));
-                           else
-                               menuItem.setIcon(buildCounterDrawable(Count,  R.drawable.ic_notifications));
+                        if (Count > 0) {
+                            if (Count > 10)
+                                menuItem.setIcon(buildCounterDrawable(9, R.drawable.ic_notifications));
+                            else
+                                menuItem.setIcon(buildCounterDrawable(Count, R.drawable.ic_notifications));
 
-                       }
+                        }
 
-                        //  models=notificationResponse.getEntryList();
+                        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                        String restoredText = prefs.getString("pid", null);
+                        if (restoredText != null) {
+                            uid = prefs.getString("pid", "0");//"No name defined" is the default value.
+                        }
+
+
+                        JSONArray array =object.getJSONArray("entry_list");
+
+                        for (int i = 0  ; i < array.length() ; i++) {
+
+                            JSONObject jsonObject = array.getJSONObject(i);
+
+                            JSONObject Name_Value_list = jsonObject.getJSONObject("name_value_list");
+                            String id = Name_Value_list.getJSONObject("auto_id_c").getString("value");
+                            Log.d("id :", id);
+                            int iid = Integer.parseInt(id);
+                            if (uid != null) {
+                                shid = Integer.parseInt(uid);
+                            }
+
+                            if (iid > shid) {
+
+                                SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+                                editor.putString("pid", id);
+                                editor.apply();
+
+                                String title = "ANANLAH Call Invitation";
+                                String subject = Name_Value_list.getJSONObject("name").getString("value");
+
+                                createNotification(title, subject, Name_Value_list.getJSONObject("lead_phone_c").getString("value"), jsonObject.getString("id"));
+
+                            }
+
+
+                        }
+
+                            //  models=notificationResponse.getEntryList();
                     }
 
                 } catch (JSONException e) {
@@ -457,6 +513,7 @@ public class Call_List extends AppCompatActivity {
                 }
 
             }
+
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -478,4 +535,154 @@ public class Call_List extends AppCompatActivity {
 
     }
 
+    private void createNotification(String title, String subject, final String phoneNo, final String id) {
+
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(Call_List.this, android.R.style.Theme_Material_Light_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(Call_List.this);
+        }
+        builder.setCancelable(false);
+        builder.setTitle("ANALAH CALL ALERT")
+                .setMessage("Call to : " +phoneNo)
+                .setPositiveButton("CALL", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        if (Build.VERSION.SDK_INT < 23) {
+                            //Do not need to check the permission
+                        } else {
+                            if (checkAndRequestPermissions()) {
+                      /* Intent intent = new Intent(context, Main2Activity.class);
+                       intent.putExtra("mobielno",current.LeadMobile);
+                       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                       context.startActivity(intent);*/
+
+                       /* Uri packageURI = Uri.parse("package:"+"dealwithusmailcom.dwsales");
+                        Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
+                        context.startActivity(uninstallIntent);*/
+
+                                try {
+                                    // Initiate DevicePolicyManager.
+
+                                    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O){
+                                        Intent intent = new Intent(getApplicationContext(), TService.class);
+                                        intent.putExtra("id",id);
+                                        startService(intent);
+                                    }
+                                    Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+phoneNo));
+                                    startActivity(intent1);
+                                    String s = "{\"session\":\""+Global.Session+"\",\"module_name\":\"C_Call_Initiate\",\"name_value_list\":[{\"name\":\"id\",\"value\":\""+id+"\"},{\"name\":\"lead_status_c\",\"value\":\"true\"}]}";
+                                    setEntry(s);
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                        }
+
+
+                    }
+                })
+                .setNegativeButton("DECLINE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String s = "{\"session\":\""+Global.Session+"\",\"module_name\":\"C_Call_Initiate\",\"name_value_list\":[{\"name\":\"id\",\"value\":\""+id+"\"},{\"name\":\"lead_status_c\",\"value\":\"true\"}]}";
+                        setEntry(s);
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    private void setEntry(final String rest) {
+        progressDialog.setMessage("Loading..");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        StringRequest stringRequest = new StringRequest(StringRequest.Method.POST, "http://analah.demobox.online/service/v4_1/rest.php", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                progressDialog.dismiss();
+
+                try {
+                    JSONObject object = new JSONObject(response);
+
+                    if (object.has("name")){
+                        AlertDialog.Builder builder;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            builder = new AlertDialog.Builder(Call_List.this, android.R.style.Theme_Material_Light_Dialog_Alert);
+                        } else {
+                            builder = new AlertDialog.Builder(Call_List.this);
+                        }
+                        builder.setCancelable(false);
+                        builder.setTitle(object.getString("name"))
+                                .setMessage(object.getString("description"))
+                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        session.setLogin(false);
+                                        dialog.dismiss();
+                                        db.deleteUsers();
+                                        startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                                        finish();
+                                    }
+                                })
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
+                    }else {
+                      //  startActivity(new Intent(getApplicationContext(),Notification.class));
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map <String,String> param = new HashMap<String,String>();
+
+                param.put("method","set_entry");
+                param.put("input_type","JSON");
+                param.put("response_type","JSON");
+                param.put("rest_data",rest);
+                return param;
+            }
+        };
+        AppController.getInstance().addToRequestQueue(stringRequest);
+
+    }
+
+    private class MyReciver extends ResultReceiver {
+        public MyReciver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            super.onReceiveResult(resultCode, resultData);
+
+            if (resultCode == 18 && resultData != null){
+
+                final String result=resultData.getString("Location");
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        getCount();
+
+                    }
+                });
+            }
+        }
+    }
 }

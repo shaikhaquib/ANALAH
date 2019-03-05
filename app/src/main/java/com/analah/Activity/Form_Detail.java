@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.analah.AppController;
 import com.analah.CORE.SQLiteHandler;
@@ -30,6 +32,7 @@ import com.analah.CORE.SessionManager;
 import com.analah.DetailsRespoone.DetailResponse;
 import com.analah.Global;
 import com.analah.R;
+import com.analah.RadioButtonWithTableLayout;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -53,24 +56,27 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Form_Detail extends AppCompatActivity {
 
     LinearLayout LeadView,CallBackview;
+    CardView btnFeedBack;
     Button save;
-    RadioButton Lead , callback ,notIntrest,notQualified;
+    RadioButton converted, callback ,notIntrest, notcontected ,interested;
     ProgressDialog progressDialog;
     private SQLiteHandler db;
     private SessionManager session;
-    String JSON;
+    String JSON ,feedback;
     TextView campName;
-    EditText edtName ,edtTitle ,edtDepartment,edtAccountName,edtPrimoryadd,edtEmail,edtMobile,fileName;
+    EditText edtName ,edtTitle ,edtDepartment,edtAccountName,edtPrimoryadd,edtEmail,edtMobile,fileName,edtRemark;
     String set_entry_JSON,base64String;
     File Uplaodfile;
     private static final int OPEN_REQUEST_CODE = 41;
-
+    com.analah.RadioButtonWithTableLayout RadioButtonWithTableLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,11 +91,16 @@ public class Form_Detail extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         LeadView = findViewById(R.id.leadViw);
         CallBackview = findViewById(R.id.CallBack);
-        Lead = findViewById(R.id.rbLead);
-        callback = findViewById(R.id.rbCallback);
-        notIntrest = findViewById(R.id.rbNotIntrest);
-        notQualified = findViewById(R.id.rbNotQualifed);
-        save = findViewById(R.id.save);
+        save         = findViewById(R.id.save);
+        btnFeedBack  = findViewById(R.id.addfeedabck);
+
+        converted    = findViewById(R.id.rbconverted);
+        callback     = findViewById(R.id.rbCallback);
+        notIntrest   = findViewById(R.id.rbNotIntrest);
+        notcontected = findViewById(R.id.rbNotcontected);
+        interested   = findViewById(R.id.rbInterested);
+        edtRemark    = findViewById(R.id.cmpDesc);
+
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,9 +119,72 @@ public class Form_Detail extends AppCompatActivity {
         fileName       = findViewById(R.id.fileName);
 
 
+        interested.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    feedback = "Contacted_Interested";
+                }
+            }
+        }); notIntrest.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    feedback = "Contacted_Not_Interested";
+                }
+            }
+        }); callback.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    feedback = "Contacted_Call_Back";
+                }
+            }
+        }); notcontected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    feedback = "Not_Contacted";
+                }
+            }
+        }); converted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    feedback = "Contacted_Converted";
+                }
+            }
+        });
+
+
+        btnFeedBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+             //   Toast.makeText(Form_Detail.this, feedback, Toast.LENGTH_SHORT).show();
+
+                if (!edtRemark.getText().toString().isEmpty()){
+
+                String Rest = "{\"session\":\""+Global.Session+"\"," +
+                        "\"module_name\":\"F_FeedBack\"," +
+                        "\"name_value_list\":[{\"name\":\"call_result_c\",\"value\":\""+feedback+"\"}," +
+                        "{\"name\":\"assigned_user_id\",\"value\":\""+Global.customerid+"\"}," +
+                        "{\"name\":\"remark_c\",\"value\":\""+edtRemark.getText().toString()+"\"}," +
+                        "{\"name\":\"follow_up_date_c_date\",\"value\":\""+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+"\"}," +
+                        "{\"name\":\"scrip_name_c\",\"value\":\"scrip name\"}," +
+                        "{\"name\":\"scrip_quantity_c\",\"value\":\"scrip qtt\"}," +
+                        "{\"name\":\"scrip_rate_c\",\"value\":\"scrip rate\"}]}";
+
+                setfeedback(Rest);
+                }else {
+                    Global.diloge(Form_Detail.this,"Field Required","Remark is required");
+                    edtRemark.setError("Field Required");
+                }
+            }
+        });
+
         set_entry_JSON = "{\"session\":\""+Global.Session+"\"," + "\"module_name\":\"Notes\",\"name_value_list\":[\"name\",\"value\"]}";
 
-        Lead.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+       /* converted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
@@ -119,7 +193,8 @@ public class Form_Detail extends AppCompatActivity {
                     LeadView.setVisibility(View.GONE);
                 }
             }
-        });
+        });*/
+/*
         callback.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -130,9 +205,61 @@ public class Form_Detail extends AppCompatActivity {
                 }
             }
         });
+*/
         JSON = "{\"session\":\""+Global.Session+"\",\"module_name\":\"Leads\",\"id\":\""+getIntent().getStringExtra("id")+"\",\"select_fields\":[\"id\",\"name\",\"phone_mobile\",\"account_name\",\"email1\",\"phone_work\",\"title\",\"department\",\"description\",\"status\",\"lead_source\"],\"link_name_to_fields_array \":0,\"track_view\":\"false\"}";
         getDetails();
         set_Entry();
+    }
+
+    private void setfeedback(final String rest) {
+        progressDialog.show();
+        StringRequest stringRequest = new StringRequest(StringRequest.Method.POST, "http://analah.demobox.online/service/v4_1/rest.php", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                progressDialog.dismiss();
+
+                try {
+                    JSONObject object = new JSONObject(response);
+                    set_entry_JSON = "{\"session\":\""+Global.Session+"\"," +
+                            "\"module_name\":\"Leads\"," +
+                            "\"module_id\":\""+getIntent().getStringExtra("id")+"\"," +
+                            "\"link_field_name\":\"leads_f_feedback_1\"," +
+                            "\"related_ids\":[\""+object.getString("id")+"\"]}";
+
+                    Global.diloge(Form_Detail.this,"Success","Your feedback has been recorded \n Thank you ! for yor valuable feedback.");
+
+                   // Global.set_Entry_ID = object.getString("id");
+                    set_relationship(set_entry_JSON);
+
+
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map <String,String> param = new HashMap<String,String>();
+
+                param.put("method","set_entry");
+                param.put("input_type","JSON");
+                param.put("response_type","JSON");
+                param.put("rest_data",rest);
+                return param;
+            }
+        };
+        AppController.getInstance().addToRequestQueue(stringRequest);
+
+
     }
 
     @Override
