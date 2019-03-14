@@ -54,8 +54,6 @@
                 android:layout_height="fill_parent">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_column="1"
                     android:text="Name :"
                     android:paddingTop="8dp"
@@ -63,8 +61,6 @@
 
                 <EditText
                     android:id="@+id/cmpname"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_column="2"
                     android:paddingTop="8dp"
                     android:paddingLeft="8dp"
@@ -79,8 +75,6 @@
                 android:layout_marginTop="8dp">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_column="1"
                     android:text="Title :"
                     android:paddingTop="8dp"
@@ -88,8 +82,6 @@
 
                 <EditText
                     android:id="@+id/cmptitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_column="2"
                     android:enabled="false"
                     android:background="#e8e8e8"
@@ -105,16 +97,12 @@
 
                 <TextView
                     android:paddingTop="8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_column="1"
                     android:text="Department :"
                     android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/cmpdept"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_column="2"
                     android:enabled="false"
                     android:background="#e8e8e8"
@@ -130,16 +118,12 @@
 
                 <TextView
                     android:paddingTop="8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_column="1"
                     android:text="Account Name :"
                     android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/cmpacctname"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_column="2"
                     android:enabled="false"
                     android:background="#e8e8e8"
@@ -156,8 +140,6 @@
                 android:gravity="top|center">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
                     android:layout_column="1"
                     android:layout_gravity="top"
                     android:paddingTop="8dp"
@@ -166,8 +148,6 @@
 
                 <EditText
                     android:id="@+id/cmpadd"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_column="2"
                     android:background="#e8e8e8"
                     android:enabled="false"
@@ -183,16 +163,12 @@
                 android:layout_marginTop="8dp">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_column="1"
                     android:text="Email Address :"
                     android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/cmpemail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_column="2"
                     android:background="#e8e8e8"
                     android:paddingTop="8dp"
@@ -208,16 +184,12 @@
 
                 <TextView
                     android:paddingTop="8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_column="1"
                     android:text="Mobile No :"
                     android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/cmpMobile"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_column="2"
                     android:enabled="false"
                     android:background="#e8e8e8"
@@ -309,78 +281,54 @@
 
         </android.support.v7.widget.CardView>
 
-        <com.analah.RadioButtonWithTableLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
+
+        <RadioGroup
+            android:id="@+id/rbGroup"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            >
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                >
-
-
+            android:layout_height="wrap_content">
                 <RadioButton
                     android:id="@+id/rbInterested"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:buttonTint="@color/colorPrimary"
                     android:drawablePadding="@dimen/margin_16"
                     android:paddingLeft="20dp"
-                    android:text=" Interested" />
+                    android:text="Contacted Interested" />
                 <RadioButton
                     android:id="@+id/rbNotIntrest"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:buttonTint="@color/colorPrimary"
                     android:paddingLeft="20dp"
-                    android:text="Not Interested" />
-
-
-            </TableRow>
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
-
+                    android:text="Contacted Not Interested" />
                 <RadioButton
                     android:id="@+id/rbCallback"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:buttonTint="@color/colorPrimary"
                     android:paddingLeft="20dp"
-                    android:text=" Call Back" />
-
+                    android:text="Contacted Call Back" />
                 <RadioButton
                     android:id="@+id/rbconverted"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:buttonTint="@color/colorPrimary"
                     android:drawablePadding="@dimen/margin_16"
                     android:paddingLeft="20dp"
-                    android:text="Converted" />
-            </TableRow>
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
-
+                    android:text="Contacted Converted" />
                 <RadioButton
                     android:id="@+id/rbNotcontected"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:buttonTint="@color/colorPrimary"
                     android:paddingLeft="20dp"
-                    android:text=" Not Contected" />
-
-            </TableRow>
-
-        </com.analah.RadioButtonWithTableLayout>
+                    android:text="Not Contacted" />
+            </RadioGroup>
 
         <LinearLayout
             android:id="@+id/leadViw"
@@ -414,7 +362,6 @@
                 android:id="@+id/cmpLeadsource"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_column="2"
                 android:background="#e8e8e8"
                 android:lines="2"
                 android:textSize="16sp" />
@@ -422,11 +369,106 @@
         </LinearLayout>
 
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/viewConverted"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="8dp"
+                android:stretchColumns="2">
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    app:cardBackgroundColor="@color/colorPrimary"
+                    app:cardCornerRadius="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="SCRIP DATA"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+
+
+                </android.support.v7.widget.CardView>
+
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                    <TextView
+                        android:layout_column="1"
+                        android:text="Scrip Name :"
+                        android:paddingTop="8dp"
+                        android:textSize="14sp" />
+
+                    <EditText
+                        android:id="@+id/scripNAME"
+                        android:layout_column="2"
+                        android:paddingTop="8dp"
+                        android:paddingLeft="8dp"
+                        android:layout_margin="4dp"
+                        android:background="#e8e8e8"
+                        android:textSize="16sp" />
+                 </TableRow>
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                    <TextView
+                        android:layout_column="1"
+                        android:text="Scrip Quantity :"
+                        android:paddingTop="8dp"
+                        android:textSize="14sp" />
+
+                    <EditText
+                        android:id="@+id/scripQNT"
+                        android:layout_column="2"
+                        android:paddingTop="8dp"
+                        android:paddingLeft="8dp"
+                        android:layout_margin="4dp"
+                        android:background="#e8e8e8"
+                        android:textSize="16sp" />
+                 </TableRow>
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                    <TextView
+                        android:layout_column="1"
+                        android:text="Scrip Rate :"
+                        android:paddingTop="8dp"
+                        android:textSize="14sp" />
+
+                    <EditText
+                        android:id="@+id/scripRate"
+                        android:layout_column="2"
+                        android:paddingTop="8dp"
+                        android:paddingLeft="8dp"
+                        android:layout_margin="4dp"
+                        android:background="#e8e8e8"
+                        android:textSize="16sp" />
+                 </TableRow>
+            </TableLayout>
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/CallBack"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
@@ -454,7 +496,7 @@
                 android:gravity="center_horizontal|center_vertical">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_horizontal|center_vertical">
@@ -462,17 +504,21 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_date_range_black_24dp" />
+                        android:src="@drawable/ic_date_range_black_24dp"
+                        android:onClick="openCalender"/>
 
                     <EditText
                         android:id="@+id/cmpDate"
-                        android:layout_width="130dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_column="2"
+                        android:enabled="false"
+                        android:layout_gravity="center"
+                        android:onClick="openCalender"
+                        android:hint="Select Day and Time"
+                        android:padding="4dp"
                         android:layout_marginLeft="4dp"
                         android:background="#e8e8e8"
-                        android:paddingTop="8dp"
-                        android:gravity="center"
+                        android:gravity="center_vertical|center"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -485,13 +531,16 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_time_black_24dp" />
+                        android:src="@drawable/ic_time_black_24dp"
+                        android:visibility="gone"
+                        android:onClick="openCalender"/>
 
                     <EditText
                         android:id="@+id/cmpTime"
+                        android:visibility="gone"
                         android:layout_width="130dp"
                         android:layout_height="wrap_content"
-                        android:layout_column="2"
+                        android:enabled="false"
                         android:layout_marginLeft="4dp"
                         android:background="#e8e8e8"
                         android:paddingTop="8dp"
@@ -529,7 +578,6 @@
             android:id="@+id/cmpDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_column="2"
             android:layout_marginBottom="@dimen/margin_16"
             android:background="@drawable/border"
             android:gravity="top"

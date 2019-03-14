@@ -1,6 +1,7 @@
 package com.analah.Activity;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,12 +24,14 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.analah.AppController;
 import com.analah.CORE.SQLiteHandler;
 import com.analah.CORE.SessionManager;
+import com.analah.CustomDateTimePicker;
 import com.analah.DetailsRespoone.DetailResponse;
 import com.analah.Global;
 import com.analah.R;
@@ -37,6 +40,8 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
+import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -56,27 +61,33 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Form_Detail extends AppCompatActivity {
 
-    LinearLayout LeadView,CallBackview;
+    LinearLayout LeadView,CallBackview,scripView;
     CardView btnFeedBack;
     Button save;
     RadioButton converted, callback ,notIntrest, notcontected ,interested;
     ProgressDialog progressDialog;
     private SQLiteHandler db;
     private SessionManager session;
-    String JSON ,feedback;
+    String JSON ,feedback ,strdate;
     TextView campName;
-    EditText edtName ,edtTitle ,edtDepartment,edtAccountName,edtPrimoryadd,edtEmail,edtMobile,fileName,edtRemark;
+    EditText edtName ,edtTitle ,edtDepartment,edtAccountName,edtPrimoryadd,edtEmail,edtMobile,fileName,edtRemark,cmpDate, cmpTime;
+    EditText scripNAME,scripQnt,scripRate;
     String set_entry_JSON,base64String;
     File Uplaodfile;
+    RadioGroup rbGroup;
     private static final int OPEN_REQUEST_CODE = 41;
     com.analah.RadioButtonWithTableLayout RadioButtonWithTableLayout;
+
+    CustomDateTimePicker custom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,9 +101,17 @@ public class Form_Detail extends AppCompatActivity {
         db = new SQLiteHandler(this);
         progressDialog = new ProgressDialog(this);
         LeadView = findViewById(R.id.leadViw);
+        scripView = findViewById(R.id.viewConverted);
         CallBackview = findViewById(R.id.CallBack);
         save         = findViewById(R.id.save);
         btnFeedBack  = findViewById(R.id.addfeedabck);
+        cmpDate  = findViewById(R.id.cmpDate);
+        cmpTime  = findViewById(R.id.cmpTime);
+        scripNAME  = findViewById(R.id.scripNAME);
+        scripQnt  = findViewById(R.id.scripQNT);
+        scripRate  = findViewById(R.id.scripRate);
+
+        strdate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
         converted    = findViewById(R.id.rbconverted);
         callback     = findViewById(R.id.rbCallback);
@@ -100,6 +119,7 @@ public class Form_Detail extends AppCompatActivity {
         notcontected = findViewById(R.id.rbNotcontected);
         interested   = findViewById(R.id.rbInterested);
         edtRemark    = findViewById(R.id.cmpDesc);
+        rbGroup      = findViewById(R.id.rbGroup);
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,42 +139,7 @@ public class Form_Detail extends AppCompatActivity {
         fileName       = findViewById(R.id.fileName);
 
 
-        interested.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    feedback = "Contacted_Interested";
-                }
-            }
-        }); notIntrest.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    feedback = "Contacted_Not_Interested";
-                }
-            }
-        }); callback.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    feedback = "Contacted_Call_Back";
-                }
-            }
-        }); notcontected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    feedback = "Not_Contacted";
-                }
-            }
-        }); converted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    feedback = "Contacted_Converted";
-                }
-            }
-        });
+
 
 
         btnFeedBack.setOnClickListener(new View.OnClickListener() {
@@ -162,14 +147,50 @@ public class Form_Detail extends AppCompatActivity {
             public void onClick(View v) {
              //   Toast.makeText(Form_Detail.this, feedback, Toast.LENGTH_SHORT).show();
 
-                if (!edtRemark.getText().toString().isEmpty()){
+                int selectedId = rbGroup.getCheckedRadioButtonId();
+
+                // find the radiobutton by returned id
+                RadioButton  radioButton = (RadioButton) findViewById(selectedId);
+
+                if (selectedId == R.id.rbconverted){
+
+                    if (scripNAME.getText().toString().isEmpty()){
+                        Global.diloge(Form_Detail.this,"Field Required","Scrip Name is required");
+                        scripNAME.setError("Field Required");
+                    }else  if (scripQnt.getText().toString().isEmpty()){
+                        Global.diloge(Form_Detail.this,"Field Required","Scrip Quantity is required");
+                        scripQnt.setError("Field Required");
+                    }else if (scripRate.getText().toString().isEmpty()){
+                        Global.diloge(Form_Detail.this,"Field Required","Scrip Rate is required");
+                        scripRate.setError("Field Required");
+                    }else if(edtRemark.getText().toString().isEmpty()){
+                        Global.diloge(Form_Detail.this,"Field Required","Remark is required");
+                        edtRemark.setError("Field Required");
+                    }else {
+
+                        String Rest = "{\"session\":\""+Global.Session+"\"," +
+                                "\"module_name\":\"F_FeedBack\"," +
+                                "\"name_value_list\":[{\"name\":\"call_result_c\",\"value\":\""+radioButton.getText().toString()    +"\"}," +
+                                "{\"name\":\"assigned_user_id\",\"value\":\""+Global.customerid+"\"}," +
+                                "{\"name\":\"remark_c\",\"value\":\""+edtRemark.getText().toString()+"\"}," +
+                                "{\"name\":\"follow_up_date_c_date\",\"value\":\""+strdate+"\"}," +
+                                "{\"name\":\"scrip_name_c\",\"value\":\""+scripNAME.getText().toString()+"\"}," +
+                                "{\"name\":\"scrip_quantity_c\",\"value\":\""+scripQnt.getText().toString()+"\"}," +
+                                "{\"name\":\"scrip_rate_c\",\"value\":\""+scripRate.getText().toString()+"\"}]}";
+
+                        setfeedback(Rest);
+                    }
+
+
+                }
+               else if (!edtRemark.getText().toString().isEmpty()){
 
                 String Rest = "{\"session\":\""+Global.Session+"\"," +
                         "\"module_name\":\"F_FeedBack\"," +
-                        "\"name_value_list\":[{\"name\":\"call_result_c\",\"value\":\""+feedback+"\"}," +
+                        "\"name_value_list\":[{\"name\":\"call_result_c\",\"value\":\""+radioButton.getText().toString()    +"\"}," +
                         "{\"name\":\"assigned_user_id\",\"value\":\""+Global.customerid+"\"}," +
                         "{\"name\":\"remark_c\",\"value\":\""+edtRemark.getText().toString()+"\"}," +
-                        "{\"name\":\"follow_up_date_c_date\",\"value\":\""+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+"\"}," +
+                        "{\"name\":\"follow_up_date_c_date\",\"value\":\""+strdate+"\"}," +
                         "{\"name\":\"scrip_name_c\",\"value\":\"scrip name\"}," +
                         "{\"name\":\"scrip_quantity_c\",\"value\":\"scrip qtt\"}," +
                         "{\"name\":\"scrip_rate_c\",\"value\":\"scrip rate\"}]}";
@@ -194,7 +215,6 @@ public class Form_Detail extends AppCompatActivity {
                 }
             }
         });*/
-/*
         callback.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -205,11 +225,34 @@ public class Form_Detail extends AppCompatActivity {
                 }
             }
         });
-*/
+        interested.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    CallBackview.setVisibility(View.VISIBLE);
+                }else {
+                    CallBackview.setVisibility(View.GONE);
+                }
+            }
+        });
+        converted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    scripView.setVisibility(View.VISIBLE);
+                }else {
+                    scripView.setVisibility(View.GONE);
+                }
+            }
+        });
+
         JSON = "{\"session\":\""+Global.Session+"\",\"module_name\":\"Leads\",\"id\":\""+getIntent().getStringExtra("id")+"\",\"select_fields\":[\"id\",\"name\",\"phone_mobile\",\"account_name\",\"email1\",\"phone_work\",\"title\",\"department\",\"description\",\"status\",\"lead_source\"],\"link_name_to_fields_array \":0,\"track_view\":\"false\"}";
         getDetails();
         set_Entry();
+
+
     }
+
 
     private void setfeedback(final String rest) {
         progressDialog.show();
@@ -400,13 +443,29 @@ public class Form_Detail extends AppCompatActivity {
                         Gson gson = new Gson();
                         DetailResponse notificationResponse = gson.fromJson(response, DetailResponse.class);
 
-                        campName      .setText(notificationResponse.getEntryList().get(0).getModuleName());
+                       if (notificationResponse.getEntryList().get(0).getModuleName()!=null)
+                           campName      .setText(notificationResponse.getEntryList().get(0).getModuleName());
+
+
+                        if(notificationResponse.getEntryList().get(0).getNameValueList().getName().getValue()!=null)
                         edtName       .setText(notificationResponse.getEntryList().get(0).getNameValueList().getName().getValue());
+
+                        if(notificationResponse.getEntryList().get(0).getNameValueList().getTitle().getValue()!=null)
                         edtTitle      .setText(notificationResponse.getEntryList().get(0).getNameValueList().getTitle().getValue());
+
+                        if(notificationResponse.getEntryList().get(0).getNameValueList().getDepartment().getValue()!=null)
                         edtDepartment .setText(notificationResponse.getEntryList().get(0).getNameValueList().getDepartment().getValue());
+
+                        if(notificationResponse.getEntryList().get(0).getNameValueList().getAccountName().getValue()!=null)
                         edtAccountName.setText(notificationResponse.getEntryList().get(0).getNameValueList().getAccountName().getValue());
+
+                        if(notificationResponse.getEntryList().get(0).getNameValueList().getDescription().getValue()!=null)
                         edtPrimoryadd .setText(notificationResponse.getEntryList().get(0).getNameValueList().getDescription().getValue());
+
+                        if(notificationResponse.getEntryList().get(0).getNameValueList().getEmail1().getValue()!=null)
                         edtEmail      .setText(notificationResponse.getEntryList().get(0).getNameValueList().getEmail1().getValue());
+
+                        if(notificationResponse.getEntryList().get(0).getNameValueList().getPhoneMobile().getValue()!=null)
                         edtMobile     .setText(notificationResponse.getEntryList().get(0).getNameValueList().getPhoneMobile().getValue());
 
 
@@ -529,6 +588,35 @@ public class Form_Detail extends AppCompatActivity {
     public void Save() {
         new GetAlbum().execute("set_note_attachment","JSON","JSON","{\"session\":\""+Global.Session+"\",\"note\":{\"id\":\""+Global.set_Entry_ID+"\",\"filename\":\""+Uplaodfile.getName()+"\",\"file\":\""+base64String+"\"}}");
     }
+
+    public void openCalender(View view) {
+        new SingleDateAndTimePickerDialog.Builder(Form_Detail.this)
+                //.bottomSheet()
+                //.curved()
+                //.minutesStep(15)
+                //.displayHours(false)
+                //.displayMinutes(false)
+                //.todayText("aujourd'hui")
+                .minDateRange(new Date())
+                .displayListener(new SingleDateAndTimePickerDialog.DisplayListener() {
+                    @Override
+                    public void onDisplayed(SingleDateAndTimePicker picker) {
+                        //retrieve the SingleDateAndTimePicker
+                    }
+                })
+
+                .title("Select Day and Time")
+                .listener(new SingleDateAndTimePickerDialog.Listener() {
+                    @Override
+                    public void onDateSelected(Date date) {
+
+                        DateFormat dateFormat = new SimpleDateFormat("E dd MMM hh:mm a");
+                        strdate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+                        cmpDate.setText(dateFormat.format(date));
+
+                        Toast.makeText(Form_Detail.this,strdate, Toast.LENGTH_SHORT).show();
+                    }
+                }).display();    }
 
     private class GetAlbum extends AsyncTask<String, String, String> {
 

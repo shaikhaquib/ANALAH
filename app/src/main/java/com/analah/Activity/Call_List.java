@@ -543,12 +543,15 @@ public class Call_List extends AppCompatActivity {
         } else {
             builder = new AlertDialog.Builder(Call_List.this);
         }
+        AlertDialog  mAlertDialog = builder.create();
+
         builder.setCancelable(false);
         builder.setTitle("ANALAH CALL ALERT")
                 .setMessage("Call to : " +phoneNo)
                 .setPositiveButton("CALL", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
+                        dialog.dismiss();
                         if (Build.VERSION.SDK_INT < 23) {
                             //Do not need to check the permission
                         } else {
@@ -589,6 +592,7 @@ public class Call_List extends AppCompatActivity {
                 .setNegativeButton("DECLINE", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
                         String s = "{\"session\":\""+Global.Session+"\",\"module_name\":\"C_Call_Initiate\",\"name_value_list\":[{\"name\":\"id\",\"value\":\""+id+"\"},{\"name\":\"lead_status_c\",\"value\":\"true\"}]}";
                         setEntry(s);
                     }
