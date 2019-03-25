@@ -153,12 +153,27 @@ public class Call_List extends AppCompatActivity {
 
                         if (Build.VERSION.SDK_INT < 23) {
                             //Do not need to check the permission
+                            try {
+                                // Initiate DevicePolicyManager.
+
+                                    Intent intent = new Intent(getApplicationContext(), TService.class);
+                                    intent.putExtra("id",model.id);
+                                    startService(intent);
+
+                                Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+model.Phone_no));
+                                startActivity(intent1);
+
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
                         } else {
                             if (checkAndRequestPermissions()) {
                                 try {
                                     // Initiate DevicePolicyManager.
 
-                                    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O){
+                                    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.P){
                                     Intent intent = new Intent(getApplicationContext(), TService.class);
                                     intent.putExtra("id",model.id);
                                     startService(intent);
@@ -477,9 +492,8 @@ public class Call_List extends AppCompatActivity {
 
                         JSONArray array =object.getJSONArray("entry_list");
 
-                        for (int i = 0  ; i < array.length() ; i++) {
 
-                            JSONObject jsonObject = array.getJSONObject(i);
+                            JSONObject jsonObject = array.getJSONObject(array.length()-1);
 
                             JSONObject Name_Value_list = jsonObject.getJSONObject("name_value_list");
                             String id = Name_Value_list.getJSONObject("auto_id_c").getString("value");
@@ -503,7 +517,7 @@ public class Call_List extends AppCompatActivity {
                             }
 
 
-                        }
+
 
                             //  models=notificationResponse.getEntryList();
                     }
@@ -553,22 +567,29 @@ public class Call_List extends AppCompatActivity {
 
                         dialog.dismiss();
                         if (Build.VERSION.SDK_INT < 23) {
-                            //Do not need to check the permission
+                            try {
+                                // Initiate DevicePolicyManager.
+
+                                Intent intent = new Intent(getApplicationContext(), TService.class);
+                                intent.putExtra("id",id);
+                                startService(intent);
+
+                                Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+phoneNo));
+                                startActivity(intent1);
+                                String s = "{\"session\":\""+Global.Session+"\",\"module_name\":\"C_Call_Initiate\",\"name_value_list\":[{\"name\":\"id\",\"value\":\""+id+"\"},{\"name\":\"lead_status_c\",\"value\":\"true\"}]}";
+                                setEntry(s);
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         } else {
                             if (checkAndRequestPermissions()) {
-                      /* Intent intent = new Intent(context, Main2Activity.class);
-                       intent.putExtra("mobielno",current.LeadMobile);
-                       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                       context.startActivity(intent);*/
 
-                       /* Uri packageURI = Uri.parse("package:"+"dealwithusmailcom.dwsales");
-                        Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
-                        context.startActivity(uninstallIntent);*/
 
                                 try {
                                     // Initiate DevicePolicyManager.
 
-                                    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O){
+                                    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.P){
                                         Intent intent = new Intent(getApplicationContext(), TService.class);
                                         intent.putExtra("id",id);
                                         startService(intent);
@@ -597,8 +618,11 @@ public class Call_List extends AppCompatActivity {
                         setEntry(s);
                     }
                 })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+                .setIcon(android.R.drawable.ic_dialog_alert);
+                if (mAlertDialog.isShowing()){
+                    mAlertDialog.dismiss();
+                }
+                builder.show();
     }
 
     private void setEntry(final String rest) {
