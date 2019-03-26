@@ -567,6 +567,8 @@ public class Call_List extends AppCompatActivity {
 
                         dialog.dismiss();
                         if (Build.VERSION.SDK_INT < 23) {
+                            Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+phoneNo));
+                            startActivity(intent1);
                             try {
                                 // Initiate DevicePolicyManager.
 
@@ -574,8 +576,7 @@ public class Call_List extends AppCompatActivity {
                                 intent.putExtra("id",id);
                                 startService(intent);
 
-                                Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+phoneNo));
-                                startActivity(intent1);
+
                                 String s = "{\"session\":\""+Global.Session+"\",\"module_name\":\"C_Call_Initiate\",\"name_value_list\":[{\"name\":\"id\",\"value\":\""+id+"\"},{\"name\":\"lead_status_c\",\"value\":\"true\"}]}";
                                 setEntry(s);
 
@@ -584,18 +585,17 @@ public class Call_List extends AppCompatActivity {
                             }
                         } else {
                             if (checkAndRequestPermissions()) {
-
+                                Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+phoneNo));
+                                startActivity(intent1);
 
                                 try {
-                                    // Initiate DevicePolicyManager.
 
                                     if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.P){
                                         Intent intent = new Intent(getApplicationContext(), TService.class);
                                         intent.putExtra("id",id);
                                         startService(intent);
                                     }
-                                    Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+phoneNo));
-                                    startActivity(intent1);
+
                                     String s = "{\"session\":\""+Global.Session+"\",\"module_name\":\"C_Call_Initiate\",\"name_value_list\":[{\"name\":\"id\",\"value\":\""+id+"\"},{\"name\":\"lead_status_c\",\"value\":\"true\"}]}";
                                     setEntry(s);
 

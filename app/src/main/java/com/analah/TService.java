@@ -71,7 +71,7 @@ public class TService extends Service {
         // final String terminate =(String)
               id= intent.getStringExtra("id");
               set_entry_JSON = "{\"session\":\""+ Global.Session+"\"," +
-                      "\"module_name\":\"Notes\",\"name_value_list\":[\"name\",\"value\"]}";
+                      "\"module_name\":\"Notes\",\"name_value_list\":[{\"name\":\"name\",\"value\":\"Example Note\"},{\"name\":\"description\",\"value\":\"Test content for note again\"},{\"name\":\"parent_type\",\"value\":\"Leads\"},{\"name\":\"parent_id\",\"value\":\""+id+"\"}]}";
         set_Entry();
         //        // intent.getStringExtra("terminate");
         //        // Log.d("TAG", "service started");

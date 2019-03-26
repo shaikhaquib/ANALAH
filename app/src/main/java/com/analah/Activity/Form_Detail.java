@@ -1,16 +1,20 @@
 package com.analah.Activity;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -63,13 +67,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Form_Detail extends AppCompatActivity {
-
+    private static final int MY_PERMISSIONS_REQUEST_ACCOUNTS = 1;
     LinearLayout LeadView,CallBackview,scripView;
     CardView btnFeedBack;
     Button save;
@@ -203,7 +209,9 @@ public class Form_Detail extends AppCompatActivity {
             }
         });
 
-        set_entry_JSON = "{\"session\":\""+Global.Session+"\"," + "\"module_name\":\"Notes\",\"name_value_list\":[\"name\",\"value\"]}";
+        set_entry_JSON = "{\"session\":\""+Global.Session+"\"," +
+                "\"module_name\":\"Notes\",\"name_value_list\":[{\"name\":\"name\",\"value\":\"Example Note\"},{\"name\":\"description\",\"value\":\"Test content for note again\"},{\"name\":\"parent_type\",\"value\":\"Leads\"},{\"name\":\"parent_id\",\"value\":\""+getIntent().getStringExtra("id")+"\"}]}";
+
 
        /* converted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -500,10 +508,12 @@ public class Form_Detail extends AppCompatActivity {
     }
 
     public void OpenFile(View view) {
-        Intent intent_upload = new Intent();
-        intent_upload.setType("audio/*");
-        intent_upload.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent_upload,1);
+        if (checkAndRequestPermissions()) {
+            Intent intent_upload = new Intent();
+            intent_upload.setType("audio/*");
+            intent_upload.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(intent_upload, 1);
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode,
@@ -736,4 +746,31 @@ public class Form_Detail extends AppCompatActivity {
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
+
+    private boolean checkAndRequestPermissions() {
+        int CALLPERMITION = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE);
+        int WRITEStorage = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int READStorage = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+        int RECORDAUDIO = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
+
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (CALLPERMITION != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CALL_PHONE);
+        } if (WRITEStorage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        } if (READStorage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        } if (RECORDAUDIO != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.RECORD_AUDIO);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(Form_Detail.this,listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),MY_PERMISSIONS_REQUEST_ACCOUNTS);
+            return false;
+        }
+
+
+
+        return true;
+    }
+
 }
