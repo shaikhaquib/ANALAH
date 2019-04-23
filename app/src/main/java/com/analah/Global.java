@@ -73,6 +73,7 @@ public class Global {
     public static String agentid;
     public static int premium_status = 0;
     public static String leadId;
+    public static String set_id;
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);

@@ -1,17 +1,23 @@
 package com.analah.Activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -64,6 +70,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -73,6 +80,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import static android.app.Activity.RESULT_OK;
 
 public class Form_Detail extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_ACCOUNTS = 1;
@@ -151,7 +161,7 @@ public class Form_Detail extends AppCompatActivity {
         btnFeedBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             //   Toast.makeText(Form_Detail.this, feedback, Toast.LENGTH_SHORT).show();
+                //   Toast.makeText(Form_Detail.this, feedback, Toast.LENGTH_SHORT).show();
 
                 int selectedId = rbGroup.getCheckedRadioButtonId();
 
@@ -189,19 +199,19 @@ public class Form_Detail extends AppCompatActivity {
 
 
                 }
-               else if (!edtRemark.getText().toString().isEmpty()){
+                else if (!edtRemark.getText().toString().isEmpty()){
 
-                String Rest = "{\"session\":\""+Global.Session+"\"," +
-                        "\"module_name\":\"F_FeedBack\"," +
-                        "\"name_value_list\":[{\"name\":\"call_result_c\",\"value\":\""+radioButton.getText().toString()    +"\"}," +
-                        "{\"name\":\"assigned_user_id\",\"value\":\""+Global.customerid+"\"}," +
-                        "{\"name\":\"remark_c\",\"value\":\""+edtRemark.getText().toString()+"\"}," +
-                        "{\"name\":\"follow_up_date_c_date\",\"value\":\""+strdate+"\"}," +
-                        "{\"name\":\"scrip_name_c\",\"value\":\"scrip name\"}," +
-                        "{\"name\":\"scrip_quantity_c\",\"value\":\"scrip qtt\"}," +
-                        "{\"name\":\"scrip_rate_c\",\"value\":\"scrip rate\"}]}";
+                    String Rest = "{\"session\":\""+Global.Session+"\"," +
+                            "\"module_name\":\"F_FeedBack\"," +
+                            "\"name_value_list\":[{\"name\":\"call_result_c\",\"value\":\""+radioButton.getText().toString()    +"\"}," +
+                            "{\"name\":\"assigned_user_id\",\"value\":\""+Global.customerid+"\"}," +
+                            "{\"name\":\"remark_c\",\"value\":\""+edtRemark.getText().toString()+"\"}," +
+                            "{\"name\":\"follow_up_date_c_date\",\"value\":\""+strdate+"\"}," +
+                            "{\"name\":\"scrip_name_c\",\"value\":\"scrip name\"}," +
+                            "{\"name\":\"scrip_quantity_c\",\"value\":\"scrip qtt\"}," +
+                            "{\"name\":\"scrip_rate_c\",\"value\":\"scrip rate\"}]}";
 
-                setfeedback(Rest);
+                    setfeedback(Rest);
                 }else {
                     Global.diloge(Form_Detail.this,"Field Required","Remark is required");
                     edtRemark.setError("Field Required");
@@ -256,7 +266,6 @@ public class Form_Detail extends AppCompatActivity {
 
         JSON = "{\"session\":\""+Global.Session+"\",\"module_name\":\"Leads\",\"id\":\""+getIntent().getStringExtra("id")+"\",\"select_fields\":[\"id\",\"name\",\"phone_mobile\",\"account_name\",\"email1\",\"phone_work\",\"title\",\"department\",\"description\",\"status\",\"lead_source\"],\"link_name_to_fields_array \":0,\"track_view\":\"false\"}";
         getDetails();
-        set_Entry();
 
 
     }
@@ -279,7 +288,7 @@ public class Form_Detail extends AppCompatActivity {
 
                     Global.diloge(Form_Detail.this,"Success","Your feedback has been recorded \n Thank you ! for yor valuable feedback.");
 
-                   // Global.set_Entry_ID = object.getString("id");
+                    // Global.set_Entry_ID = object.getString("id");
                     set_relationship(set_entry_JSON);
 
 
@@ -324,7 +333,14 @@ public class Form_Detail extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void set_Entry() {
+    private void set_Entry(String s) {
+
+        set_entry_JSON = "{\"session\":\""+ Global.Session+"\"," +
+                "\"module_name\":\"Notes\"," +
+                "\"name_value_list\":[{\"name\":\"name\",\"value\":\"Example Note\"}," +
+                "{\"name\":\"description\",\"value\":\"Test content for note again\"}," +
+                "{\"name\":\"parent_type\",\"value\":\"Leads\"},{\"name\":\"parent_id\",\"value\":\""+Global.set_id+"\",\"name\":\""+s+"\"}]}";
+
         progressDialog.show();
         StringRequest stringRequest = new StringRequest(StringRequest.Method.POST, "http://analah.demobox.online/service/v4_1/rest.php", new Response.Listener<String>() {
             @Override
@@ -439,8 +455,8 @@ public class Form_Detail extends AppCompatActivity {
                                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                      //  db.deleteUsers();
-                                      //  startActivity(new Intent(getApplicationContext(),Call_List.class));
+                                        //  db.deleteUsers();
+                                        //  startActivity(new Intent(getApplicationContext(),Call_List.class));
                                         finish();
                                     }
                                 })
@@ -451,30 +467,30 @@ public class Form_Detail extends AppCompatActivity {
                         Gson gson = new Gson();
                         DetailResponse notificationResponse = gson.fromJson(response, DetailResponse.class);
 
-                       if (notificationResponse.getEntryList().get(0).getModuleName()!=null)
-                           campName      .setText(notificationResponse.getEntryList().get(0).getModuleName());
+                        if (notificationResponse.getEntryList().get(0).getModuleName()!=null)
+                            campName      .setText(notificationResponse.getEntryList().get(0).getModuleName());
 
 
                         if(notificationResponse.getEntryList().get(0).getNameValueList().getName().getValue()!=null)
-                        edtName       .setText(notificationResponse.getEntryList().get(0).getNameValueList().getName().getValue());
+                            edtName       .setText(notificationResponse.getEntryList().get(0).getNameValueList().getName().getValue());
 
                         if(notificationResponse.getEntryList().get(0).getNameValueList().getTitle().getValue()!=null)
-                        edtTitle      .setText(notificationResponse.getEntryList().get(0).getNameValueList().getTitle().getValue());
+                            edtTitle      .setText(notificationResponse.getEntryList().get(0).getNameValueList().getTitle().getValue());
 
                         if(notificationResponse.getEntryList().get(0).getNameValueList().getDepartment().getValue()!=null)
-                        edtDepartment .setText(notificationResponse.getEntryList().get(0).getNameValueList().getDepartment().getValue());
+                            edtDepartment .setText(notificationResponse.getEntryList().get(0).getNameValueList().getDepartment().getValue());
 
                         if(notificationResponse.getEntryList().get(0).getNameValueList().getAccountName().getValue()!=null)
-                        edtAccountName.setText(notificationResponse.getEntryList().get(0).getNameValueList().getAccountName().getValue());
+                            edtAccountName.setText(notificationResponse.getEntryList().get(0).getNameValueList().getAccountName().getValue());
 
                         if(notificationResponse.getEntryList().get(0).getNameValueList().getDescription().getValue()!=null)
-                        edtPrimoryadd .setText(notificationResponse.getEntryList().get(0).getNameValueList().getDescription().getValue());
+                            edtPrimoryadd .setText(notificationResponse.getEntryList().get(0).getNameValueList().getDescription().getValue());
 
                         if(notificationResponse.getEntryList().get(0).getNameValueList().getEmail1().getValue()!=null)
-                        edtEmail      .setText(notificationResponse.getEntryList().get(0).getNameValueList().getEmail1().getValue());
+                            edtEmail      .setText(notificationResponse.getEntryList().get(0).getNameValueList().getEmail1().getValue());
 
                         if(notificationResponse.getEntryList().get(0).getNameValueList().getPhoneMobile().getValue()!=null)
-                        edtMobile     .setText(notificationResponse.getEntryList().get(0).getNameValueList().getPhoneMobile().getValue());
+                            edtMobile     .setText(notificationResponse.getEntryList().get(0).getNameValueList().getPhoneMobile().getValue());
 
 
 
@@ -529,7 +545,11 @@ public class Form_Detail extends AppCompatActivity {
 
                 getPath(uri);
 
-                encodeAudio(new File(getPath(uri)),Form_Detail.this);
+                try {
+                    encodeAudio(new File(getFilePath(getApplicationContext(),data.getData())),Form_Detail.this,uri);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
 
             }
         }
@@ -552,7 +572,7 @@ public class Form_Detail extends AppCompatActivity {
         return stringBuilder.toString();
     }
 
-    private void encodeAudio(File audioFile, Context ctx) {
+    private void encodeAudio(File audioFile, Context ctx, Uri uri) {
         try {
 
             byte[] audioBytes;
@@ -581,11 +601,18 @@ public class Form_Detail extends AppCompatActivity {
 
             fileName.setText(Uplaodfile.getName());
 
-            // set_Entry(_audioBase64);
+            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+            mmr.setDataSource(getApplicationContext(),uri);
+            String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            long millSecond = Integer.parseInt(durationStr);
 
+            millSecond = TimeUnit.MILLISECONDS.toMinutes(millSecond);;
+
+            set_Entry(String.valueOf(millSecond));
 
 
             Log.d("Base64",base64String);
+            Log.d("millSecond", String.valueOf(millSecond));
 
 
         } catch (FileNotFoundException e) {
@@ -773,4 +800,79 @@ public class Form_Detail extends AppCompatActivity {
         return true;
     }
 
+
+    @SuppressLint("NewApi")
+    public static String getFilePath(Context context, Uri uri) throws URISyntaxException {
+        String selection = null;
+        String[] selectionArgs = null;
+        // Uri is different in versions after KITKAT (Android 4.4), we need to
+        if (Build.VERSION.SDK_INT >= 19 && DocumentsContract.isDocumentUri(context, uri)) {//DocumentsContract.isDocumentUri(context.getApplicationContext(), uri))
+            if (isExternalStorageDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                return Environment.getExternalStorageDirectory() + "/" + split[1];
+            } else if (isDownloadsDocument(uri)) {
+                final String id = DocumentsContract.getDocumentId(uri);
+                uri = ContentUris.withAppendedId(
+                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+            } else if (isMediaDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+                if ("image".equals(type)) {
+                    uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                } else if ("video".equals(type)) {
+                    uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                } else if ("audio".equals(type)) {
+                    uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                }
+                selection = "_id=?";
+                selectionArgs = new String[]{
+                        split[1]
+                };
+            }
+        }
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            String[] projection = {
+                    MediaStore.Images.Media.DATA
+            };
+            Cursor cursor = null;
+            try {
+                cursor = context.getContentResolver()
+                        .query(uri, projection, selection, selectionArgs, null);
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                if (cursor.moveToFirst()) {
+                    return cursor.getString(column_index);
+                }
+            } catch (Exception e) {
+            }
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+        return null;
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is ExternalStorageProvider.
+     */
+    public static boolean isExternalStorageDocument(Uri uri) {
+        return "com.android.externalstorage.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is DownloadsProvider.
+     */
+    public static boolean isDownloadsDocument(Uri uri) {
+        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is MediaProvider.
+     */
+    public static boolean isMediaDocument(Uri uri) {
+        return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
 }

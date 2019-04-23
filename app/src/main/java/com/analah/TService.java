@@ -69,10 +69,8 @@ public class TService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // final String terminate =(String)
-              id= intent.getStringExtra("id");
-              set_entry_JSON = "{\"session\":\""+ Global.Session+"\"," +
-                      "\"module_name\":\"Notes\",\"name_value_list\":[{\"name\":\"name\",\"value\":\"Example Note\"},{\"name\":\"description\",\"value\":\"Test content for note again\"},{\"name\":\"parent_type\",\"value\":\"Leads\"},{\"name\":\"parent_id\",\"value\":\""+id+"\"}]}";
-        set_Entry();
+              Global.set_id= intent.getStringExtra("id");
+   //     set_Entry();
         //        // intent.getStringExtra("terminate");
         //        // Log.d("TAG", "service started");
         //        //
@@ -97,89 +95,7 @@ public class TService extends Service {
         return START_NOT_STICKY;
     }
 
-    private void set_Entry() {
-        StringRequest stringRequest = new StringRequest(StringRequest.Method.POST, "http://analah.demobox.online/service/v4_1/rest.php", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
 
-                try {
-                    JSONObject object = new JSONObject(response);
-                    set_entry_JSON = "{\"session\":\""+ Global.Session+"\"," +
-                            "\"module_name\":\"Leads\"," +
-                            "\"module_id\":\""+id+"\"," +
-                            "\"link_field_name\":\"notes\"," +
-                            "\"related_ids\":[\""+object.getString("id")+"\"]}";
-
-                    Global.set_Entry_ID = object.getString("id");
-                    set_relationship(set_entry_JSON);
-
-
-
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map <String,String> param = new HashMap<String,String>();
-
-                param.put("method","set_entry");
-                param.put("input_type","JSON");
-                param.put("response_type","JSON");
-                param.put("rest_data",set_entry_JSON);
-                return param;
-            }
-        };
-        AppController.getInstance().addToRequestQueue(stringRequest);
-
-
-    }
-
-    private void set_relationship(final String RestData) {
-        StringRequest stringRequest = new StringRequest(StringRequest.Method.POST, "http://analah.demobox.online/service/v4_1/rest.php", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                try {
-                    JSONObject object = new JSONObject(response);
-
-
-
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map <String,String> param = new HashMap<String,String>();
-
-                param.put("method","set_relationship");
-                param.put("input_type","JSON");
-                param.put("response_type","JSON");
-                param.put("rest_data",RestData);
-                return param;
-            }
-        };
-        AppController.getInstance().addToRequestQueue(stringRequest);
-
-
-    }
 
     public class CallBr extends BroadcastReceiver {
         Bundle bundle;

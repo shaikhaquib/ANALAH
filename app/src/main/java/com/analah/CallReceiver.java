@@ -2,11 +2,13 @@ package com.analah;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.View;
 import android.widget.Toast;
 
@@ -40,10 +42,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class CallReceiver extends PhonecallReceiver {
+
+
+    String set_entry_JSON;
+    String  _audioBase64;
 
     @Override
     protected void onIncomingCallReceived(Context ctx, String number, Date start) {
@@ -98,11 +105,15 @@ public class CallReceiver extends PhonecallReceiver {
             audioBytes = baos.toByteArray();
 
             // Here goes the Base64 string
-            String  _audioBase64 = Base64.encodeToString(audioBytes, Base64.DEFAULT);
+              _audioBase64 = Base64.encodeToString(audioBytes, Base64.DEFAULT);
 
             _audioBase64 = _audioBase64.replaceAll("\\s","");
 
-            new GetAlbum(ctx).execute("set_note_attachment","JSON","JSON","{\"session\":\""+Global.Session+"\",\"note\":{\"id\":\""+Global.set_Entry_ID+"\",\"filename\":\""+Global.audiofile.getName()+"\",\"file\":\""+_audioBase64+"\"}}");
+            MediaPlayer mp = MediaPlayer.create(ctx, Uri.parse(audioFile.getPath()));
+            long duration = TimeUnit.MILLISECONDS.toMinutes(mp.getDuration());
+            Log.d("duration", String.valueOf(duration));
+
+            set_Entry(ctx,String.valueOf(duration));
 
             // set_Entry(_audioBase64);
 
@@ -118,17 +129,29 @@ public class CallReceiver extends PhonecallReceiver {
         }
     }
 
-    private void set_Entry(final String Base64) {
+    private void set_Entry(final Context ctx, String s) {
+
+         set_entry_JSON = "{\"session\":\""+ Global.Session+"\"," +
+                "\"module_name\":\"Notes\"," +
+                 "\"name_value_list\":[{\"name\":\"name\",\"value\":\"Example Note\"}," +
+                 "{\"name\":\"description\",\"value\":\"Test content for note again\"}," +
+                 "{\"name\":\"parent_type\",\"value\":\"Leads\"},{\"name\":\"parent_id\",\"value\":\""+Global.set_id+"\",\"name\":\""+s+"\"}]}";
+
+
         StringRequest stringRequest = new StringRequest(StringRequest.Method.POST, "http://analah.demobox.online/service/v4_1/rest.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 try {
                     JSONObject object = new JSONObject(response);
+                    set_entry_JSON = "{\"session\":\""+ Global.Session+"\"," +
+                            "\"module_name\":\"Leads\"," +
+                            "\"module_id\":\""+Global.set_id+"\"," +
+                            "\"link_field_name\":\"notes\"," +
+                            "\"related_ids\":[\""+object.getString("id")+"\"]}";
 
-                    Log.d("Responce_Callrecord",response);
-                    //  Global.set_Entry_ID = object.getString("id");
-                    //   set_relationship(set_entry_JSON);
+                    Global.set_Entry_ID = object.getString("id");
+                    set_relationship(set_entry_JSON,ctx);
 
 
 
@@ -148,10 +171,10 @@ public class CallReceiver extends PhonecallReceiver {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map <String,String> param = new HashMap<String,String>();
 
-                param.put("method","set_note_attachment");
+                param.put("method","set_entry");
                 param.put("input_type","JSON");
                 param.put("response_type","JSON");
-                param.put("rest_data","{\"session\":\""+Global.Session+"\",\"note\":{\"id\":\""+Global.set_Entry_ID+"\",\"filename\":\""+Global.audiofile.getName()+"\",\"file\":\""+Base64+"\"}}");
+                param.put("rest_data",set_entry_JSON);
                 return param;
             }
         };
@@ -271,6 +294,44 @@ public class CallReceiver extends PhonecallReceiver {
 
 
         }
+    }
+    private void set_relationship(final String RestData, final Context ctx) {
+        StringRequest stringRequest = new StringRequest(StringRequest.Method.POST, "http://analah.demobox.online/service/v4_1/rest.php", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    JSONObject object = new JSONObject(response);
+
+
+
+                    new GetAlbum(ctx).execute("set_note_attachment","JSON","JSON","{\"session\":\""+Global.Session+"\",\"note\":{\"id\":\""+Global.set_Entry_ID+"\",\"filename\":\""+Global.audiofile.getName()+"\",\"file\":\""+_audioBase64+"\"}}");
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map <String,String> param = new HashMap<String,String>();
+
+                param.put("method","set_relationship");
+                param.put("input_type","JSON");
+                param.put("response_type","JSON");
+                param.put("rest_data",RestData);
+                return param;
+            }
+        };
+        AppController.getInstance().addToRequestQueue(stringRequest);
+
+
     }
 
 }
