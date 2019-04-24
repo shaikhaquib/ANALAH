@@ -151,7 +151,7 @@ public class TService extends Service {
         if (!sampleDir.exists()) {
             sampleDir.mkdirs();
         }
-        String file_name = "Record";
+        String file_name =out+"_"+Global.customerid;
         try {
             Global.audiofile = File.createTempFile(file_name, ".mp3", sampleDir);
         } catch (IOException e) {

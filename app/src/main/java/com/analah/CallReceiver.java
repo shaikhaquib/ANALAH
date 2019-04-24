@@ -133,7 +133,7 @@ public class CallReceiver extends PhonecallReceiver {
 
          set_entry_JSON = "{\"session\":\""+ Global.Session+"\"," +
                 "\"module_name\":\"Notes\"," +
-                 "\"name_value_list\":[{\"name\":\"name\",\"value\":\"Example Note\"}," +
+                 "\"name_value_list\":[{\"name\":\"name\",\"value\":\""+Global.customerid+" Note\"}," +
                  "{\"name\":\"description\",\"value\":\"Test content for note again\"}," +
                  "{\"name\":\"parent_type\",\"value\":\"Leads\"},{\"name\":\"parent_id\",\"value\":\""+Global.set_id+"\",\"name\":\""+s+"\"}]}";
 

@@ -151,34 +151,18 @@ public class Call_List extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
 
-                        if (Build.VERSION.SDK_INT < 23) {
-                            //Do not need to check the permission
-                            try {
-                                // Initiate DevicePolicyManager.
+                        if (Global.isValidMobile(model.Phone_no, getApplicationContext())) {
 
-                                    Intent intent = new Intent(getApplicationContext(), TService.class);
-                                    intent.putExtra("id",model.id);
-                                    startService(intent);
-
-                                Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+model.Phone_no));
-                                startActivity(intent1);
-
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                        } else {
-                            if (checkAndRequestPermissions()) {
+                            if (Build.VERSION.SDK_INT < 23) {
+                                //Do not need to check the permission
                                 try {
                                     // Initiate DevicePolicyManager.
 
-                                    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.P){
                                     Intent intent = new Intent(getApplicationContext(), TService.class);
-                                    intent.putExtra("id",model.id);
+                                    intent.putExtra("id", model.id);
                                     startService(intent);
-                                    }
-                                    Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+model.Phone_no));
+
+                                    Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + model.Phone_no));
                                     startActivity(intent1);
 
 
@@ -186,11 +170,30 @@ public class Call_List extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
 
+                            } else {
+                                if (checkAndRequestPermissions()) {
+                                    try {
+                                        // Initiate DevicePolicyManager.
 
+                                        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.P) {
+                                            Intent intent = new Intent(getApplicationContext(), TService.class);
+                                            intent.putExtra("id", model.id);
+                                            startService(intent);
+                                        }
+                                        Intent intent1 = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + model.Phone_no));
+                                        startActivity(intent1);
+
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+
+                                }
                             }
+
+
                         }
-
-
                     }
                 });
 
